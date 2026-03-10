@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 set -u
 
-LOG="$HOME/danspi-debug-$(date +%Y%m%d-%H%M%S).log"
+mkdir -p "$HOME/00_projects/startup/debug"
+LOG="$HOME/00_projects/startup/debug/danspi-debug-$(date +%Y%m%d-%H%M%S).log"
 
 exec > >(tee -a "$LOG") 2>&1
 
