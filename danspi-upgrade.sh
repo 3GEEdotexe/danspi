@@ -1,25 +1,40 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+export DEBIAN_FRONTEND=noninteractive
+
 echo "=================================================="
-echo "Updating system and installing dev + LoRa tooling"
+echo "Ubuntu / Pi dev bootstrap"
+echo "C/C++ + Python + serial/SPI/I2C/LoRa-friendly"
 echo "=================================================="
 
+if ! command -v apt >/dev/null 2>&1; then
+  echo "This script is for Debian/Ubuntu systems with apt."
+  exit 1
+fi
+
+echo
+echo "[1/8] Refreshing package metadata and repairing package state..."
+sudo apt clean
+sudo rm -rf /var/lib/apt/lists/*
+sudo dpkg --configure -a || true
 sudo apt update
+sudo apt --fix-broken install -y || true
 sudo apt full-upgrade -y
+sudo apt autoremove -y
 
-sudo apt install -y \
+echo
+echo "[2/8] Installing core development packages..."
+sudo apt install -y --no-install-recommends \
   build-essential \
   gcc \
   g++ \
   gdb \
-  clang \
   make \
   cmake \
   ninja-build \
   pkg-config \
   git \
-  git-lfs \
   curl \
   wget \
   unzip \
@@ -32,8 +47,23 @@ sudo apt install -y \
   htop \
   tree \
   jq \
-  screen \
   tmux \
+  screen
+
+echo
+echo "[3/8] Installing Python tooling..."
+sudo apt install -y --no-install-recommends \
+  python3 \
+  python3-dev \
+  python3-pip \
+  python3-venv \
+  python3-setuptools \
+  python3-wheel
+
+echo
+echo "[4/8] Installing hardware / interface tools..."
+sudo apt install -y --no-install-recommends \
+  openssh-server \
   minicom \
   picocom \
   usbutils \
@@ -45,50 +75,45 @@ sudo apt install -y \
   iputils-ping \
   dnsutils \
   rfkill \
-  wireless-tools \
   network-manager \
-  openssh-server \
-  python3 \
-  python3-dev \
-  python3-pip \
-  python3-venv \
-  python3-setuptools \
-  python3-wheel \
+  i2c-tools \
+  libi2c-dev \
+  spi-tools \
   python3-serial \
   python3-spidev \
   python3-gpiozero \
   python3-libgpiod \
   libgpiod-dev \
-  i2c-tools \
-  libi2c-dev \
-  spi-tools \
+  python3-smbus \
   libssl-dev \
-  libffi-dev \
-  libudev-dev \
-  python3-smbus
+  libffi-dev
 
-echo "=================================================="
-echo "Upgrading pip tooling"
-echo "=================================================="
+echo
+echo "[5/8] Enabling SSH..."
+sudo systemctl enable --now ssh || true
 
-python3 -m pip install --upgrade pip setuptools wheel --break-system-packages || true
+echo
+echo "[6/8] Adding current user to common hardware groups..."
+for grp in dialout gpio i2c spi; do
+  if getent group "$grp" >/dev/null 2>&1; then
+    sudo usermod -aG "$grp" "$USER" || true
+  fi
+done
 
-echo "=================================================="
-echo "Enabling SSH"
-echo "=================================================="
+echo
+echo "[7/8] Creating a Python virtual environment helper directory..."
+mkdir -p "$HOME/venvs"
 
-sudo systemctl enable --now ssh
+echo
+echo "[8/8] Final cleanup..."
+sudo apt --fix-broken install -y || true
+sudo dpkg --configure -a || true
+sudo apt autoremove -y
 
+echo
 echo "=================================================="
-echo "Adding user to common hardware access groups"
+echo "Installed tool versions"
 echo "=================================================="
-
-sudo usermod -aG dialout,gpio,i2c,spi "$USER" || true
-
-echo "=================================================="
-echo "Installed versions"
-echo "=================================================="
-
 gcc --version | head -n 1 || true
 g++ --version | head -n 1 || true
 cmake --version | head -n 1 || true
@@ -96,9 +121,14 @@ python3 --version || true
 pip3 --version || true
 git --version || true
 
-echo "=================================================="
-echo "Done"
 echo
-echo "You may need to log out and back in for new group memberships"
-echo "to take effect."
+echo "=================================================="
+echo "Done."
+echo
+echo "Notes:"
+echo "- Log out and back in for new group memberships to apply."
+echo "- Use Python virtual environments for extra libraries:"
+echo "    python3 -m venv ~/venvs/lora"
+echo "    source ~/venvs/lora/bin/activate"
+echo "    pip install pyserial setuptools wheel"
 echo "=================================================="
