@@ -1,88 +1,114 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -e
 
-# Repository configuration
-GIT_NAME="Daniel Youngk"
-GIT_EMAIL="Daniel.youngk@proton.me"
-GH_USER="3GEEdotexe"
+# ============================================
+# danspi GitHub SSH reset/setup script
+# Run this FROM ~/00_projects
+# ============================================
+
 REPO_NAME="danspi"
-LOCAL_DIR="$HOME/00_projects/startup"
-
-# Detect script directory automatically
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-
-TOKEN_FILE="$SCRIPT_DIR/md.md"
-REMOTE_URL="https://github.com/${GH_USER}/${REPO_NAME}.git"
+CLONE_DIR="danspi.startup"
+GITHUB_USER="3GEEdotexe"
+REPO_URL="git@github.com:3GEEdotexe/danspi.git"
 
 echo "-----------------------------------------"
-echo "Configuring GitHub access for Pi"
+echo "Resetting local repo"
 echo "-----------------------------------------"
 
-echo "Script directory:"
-echo "$SCRIPT_DIR"
+# Remove existing clone
+if [ -d "$CLONE_DIR" ]; then
+    echo "Removing old repo..."
+    rm -rf "$CLONE_DIR"
+fi
 
+echo "-----------------------------------------"
+echo "Preparing SSH directory"
+echo "-----------------------------------------"
+
+mkdir -p ~/.ssh
+chmod 700 ~/.ssh
+
+# Generate SSH key if none exists
+if [ ! -f ~/.ssh/id_ed25519 ]; then
+    echo "Generating new SSH key..."
+    ssh-keygen -t ed25519 -C "Daniel.youngk@proton.me" -f ~/.ssh/id_ed25519 -N ""
+fi
+
+chmod 600 ~/.ssh/id_ed25519
+
+echo "-----------------------------------------"
+echo "Starting ssh-agent"
+echo "-----------------------------------------"
+
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+
+echo "-----------------------------------------"
+echo "Writing SSH config"
+echo "-----------------------------------------"
+
+cat > ~/.ssh/config <<EOF
+Host github.com
+  HostName github.com
+  User git
+  IdentityFile ~/.ssh/id_ed25519
+  IdentitiesOnly yes
+EOF
+
+chmod 600 ~/.ssh/config
+
+echo "-----------------------------------------"
+echo "Your PUBLIC KEY (add this to GitHub)"
+echo "-----------------------------------------"
 echo
-echo "Looking for token file:"
-echo "$TOKEN_FILE"
+cat ~/.ssh/id_ed25519.pub
+echo
+echo "-----------------------------------------"
+echo "1) Copy the key above"
+echo "2) Go to:"
+echo "   https://github.com/settings/keys"
+echo "3) Click 'New SSH key'"
+echo "4) Paste the key"
+echo "-----------------------------------------"
 
-if [[ ! -f "$TOKEN_FILE" ]]; then
-    echo
-    echo "ERROR: Token file not found."
-    echo "Make sure md.md is in the same folder as setup-git.sh"
+read -p "Type y once you have added the key to GitHub: " confirm
+
+if [ "$confirm" != "y" ]; then
+    echo "Setup aborted."
     exit 1
 fi
 
-TOKEN=$(cat "$TOKEN_FILE")
-
-echo
-echo "Setting git identity..."
-git config --global user.name "$GIT_NAME"
-git config --global user.email "$GIT_EMAIL"
-
-echo
-echo "Enabling credential storage..."
-git config --global credential.helper store
-
-echo
-echo "Preparing project directory..."
-mkdir -p "$LOCAL_DIR"
-
-if [[ ! -d "$LOCAL_DIR/.git" ]]; then
-    echo "Initializing git repo..."
-    git -C "$LOCAL_DIR" init
-fi
-
-echo
-echo "Setting GitHub remote..."
-if git -C "$LOCAL_DIR" remote get-url origin >/dev/null 2>&1; then
-    git -C "$LOCAL_DIR" remote set-url origin "$REMOTE_URL"
-else
-    git -C "$LOCAL_DIR" remote add origin "$REMOTE_URL"
-fi
-
-echo
-echo "Setting branch to main..."
-git -C "$LOCAL_DIR" branch -M main
-
-echo
-echo "Saving GitHub credentials..."
-cat > "$HOME/.git-credentials" <<EOF
-https://${GH_USER}:${TOKEN}@github.com
-EOF
-
-chmod 600 "$HOME/.git-credentials"
-
-echo
 echo "-----------------------------------------"
-echo "GitHub setup complete."
+echo "Testing GitHub SSH connection"
+echo "-----------------------------------------"
+
+ssh -T git@github.com || true
+
+echo "-----------------------------------------"
+echo "Cloning repository"
+echo "-----------------------------------------"
+
+git clone "$REPO_URL" "$CLONE_DIR"
+
+cd "$CLONE_DIR"
+
+echo "-----------------------------------------"
+echo "Configuring git identity"
+echo "-----------------------------------------"
+
+git config user.name "Daniel Youngk"
+git config user.email "Daniel.youngk@proton.me"
+
+echo "-----------------------------------------"
+echo "Repository ready"
+echo "-----------------------------------------"
+
 echo
-echo "Now run:"
+echo "You can now run:"
 echo
-echo "cd $LOCAL_DIR"
+echo "cd ~/00_projects/$CLONE_DIR"
 echo "git add ."
-echo "git commit -m \"initial commit\""
-echo "git push -u origin main"
+echo "git commit -m \"message\""
+echo "git push origin main"
 echo
-echo "After verifying it works, delete:"
-echo "$TOKEN_FILE"
 echo "-----------------------------------------"
