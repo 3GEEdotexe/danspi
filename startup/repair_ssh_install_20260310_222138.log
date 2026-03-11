@@ -1,0 +1,712 @@
+==================================================
+Repair OpenSSH install / dpkg state
+==================================================
+Timestamp: 2026-03-10T22:21:38-04:00
+Log: /home/dan/repair_ssh_install_20260310_222138.log
+
+
+--------------------------------------------------
+1) Show current package/process state
+--------------------------------------------------
++ ps -ef
+UID          PID    PPID  C STIME TTY          TIME CMD
+root           1       0  1 21:43 ?        00:00:24 /sbin/init fixrtc splash
+root           2       0  0 21:43 ?        00:00:00 [kthreadd]
+root           3       2  0 21:43 ?        00:00:00 [pool_workqueue_release]
+root           4       2  0 21:43 ?        00:00:00 [kworker/R-rcu_g]
+root           5       2  0 21:43 ?        00:00:00 [kworker/R-rcu_p]
+root           6       2  0 21:43 ?        00:00:00 [kworker/R-slub_]
+root           7       2  0 21:43 ?        00:00:00 [kworker/R-netns]
+root          12       2  0 21:43 ?        00:00:00 [kworker/R-mm_pe]
+root          13       2  0 21:43 ?        00:00:00 [rcu_tasks_kthread]
+root          14       2  0 21:43 ?        00:00:00 [rcu_tasks_rude_kthread]
+root          15       2  0 21:43 ?        00:00:00 [rcu_tasks_trace_kthread]
+root          16       2  0 21:43 ?        00:00:00 [ksoftirqd/0]
+root          17       2  0 21:43 ?        00:00:01 [rcu_preempt]
+root          18       2  0 21:43 ?        00:00:00 [migration/0]
+root          19       2  0 21:43 ?        00:00:00 [cpuhp/0]
+root          20       2  0 21:43 ?        00:00:00 [cpuhp/1]
+root          21       2  0 21:43 ?        00:00:00 [migration/1]
+root          22       2  0 21:43 ?        00:00:00 [ksoftirqd/1]
+root          23       2  0 21:43 ?        00:00:00 [kworker/1:0-events]
+root          25       2  0 21:43 ?        00:00:00 [cpuhp/2]
+root          26       2  0 21:43 ?        00:00:00 [migration/2]
+root          27       2  0 21:43 ?        00:00:00 [ksoftirqd/2]
+root          30       2  0 21:43 ?        00:00:00 [cpuhp/3]
+root          31       2  0 21:43 ?        00:00:00 [migration/3]
+root          32       2  0 21:43 ?        00:00:00 [ksoftirqd/3]
+root          35       2  0 21:43 ?        00:00:00 [kdevtmpfs]
+root          36       2  0 21:43 ?        00:00:00 [kworker/R-inet_]
+root          37       2  0 21:43 ?        00:00:00 [kauditd]
+root          40       2  0 21:43 ?        00:00:00 [khungtaskd]
+root          42       2  0 21:43 ?        00:00:00 [oom_reaper]
+root          43       2  0 21:43 ?        00:00:00 [kworker/R-write]
+root          44       2  0 21:43 ?        00:00:00 [kcompactd0]
+root          45       2  0 21:43 ?        00:00:00 [khugepaged]
+root          46       2  0 21:43 ?        00:00:00 [kworker/R-kinte]
+root          47       2  0 21:43 ?        00:00:00 [kworker/R-kbloc]
+root          48       2  0 21:43 ?        00:00:00 [kworker/R-blkcg]
+root          50       2  0 21:43 ?        00:00:00 [kworker/R-tpm_d]
+root          52       2  0 21:43 ?        00:00:00 [kworker/R-edac-]
+root          53       2  0 21:43 ?        00:00:00 [kworker/R-devfr]
+root          54       2  0 21:43 ?        00:00:00 [watchdogd]
+root          55       2  0 21:43 ?        00:00:00 [kworker/1:1H-kblockd]
+root          57       2  0 21:43 ?        00:00:00 [kswapd0]
+root          58       2  0 21:43 ?        00:00:00 [kworker/R-kthro]
+root          64       2  0 21:43 ?        00:00:00 [irq/26-aerdrv]
+root          67       2  0 21:43 ?        00:00:00 [hwrng]
+root          69       2  0 21:43 ?        00:00:03 [kworker/u9:0-brcmf_wq/mmc1:0001:1]
+root          70       2  0 21:43 ?        00:00:00 [kworker/R-sdhci]
+root          71       2  0 21:43 ?        00:00:00 [irq/29-mmc1]
+root          74       2  0 21:43 ?        00:00:00 [vchiq-slot/0]
+root          75       2  0 21:43 ?        00:00:00 [vchiq-recy/0]
+root          76       2  0 21:43 ?        00:00:00 [vchiq-sync/0]
+root          77       2  0 21:43 ?        00:00:00 [kworker/R-mld]
+root          78       2  0 21:43 ?        00:00:00 [kworker/3:1H-kblockd]
+root          79       2  0 21:43 ?        00:00:00 [kworker/R-ipv6_]
+root          86       2  0 21:43 ?        00:00:00 [kworker/R-kstrp]
+root          92       2  0 21:43 ?        00:00:00 [kworker/R-zswap]
+root          93       2  0 21:43 ?        00:00:00 [kworker/R-zswap]
+root          94       2  0 21:43 ?        00:00:00 [kworker/R-zswap]
+root          95       2  0 21:43 ?        00:00:00 [kworker/R-zswap]
+root          96       2  0 21:43 ?        00:00:00 [kworker/R-zswap]
+root          97       2  0 21:43 ?        00:00:00 [kworker/R-zswap]
+root          98       2  0 21:43 ?        00:00:00 [kworker/R-zswap]
+root          99       2  0 21:43 ?        00:00:00 [kworker/R-zswap]
+root         100       2  0 21:43 ?        00:00:00 [kworker/R-zswap]
+root         101       2  0 21:43 ?        00:00:00 [kworker/R-zswap]
+root         102       2  0 21:43 ?        00:00:00 [kworker/R-zswap]
+root         103       2  0 21:43 ?        00:00:00 [kworker/R-zswap]
+root         104       2  0 21:43 ?        00:00:00 [kworker/R-zswap]
+root         105       2  0 21:43 ?        00:00:00 [kworker/R-zswap]
+root         106       2  0 21:43 ?        00:00:00 [kworker/R-zswap]
+root         107       2  0 21:43 ?        00:00:00 [kworker/R-zswap]
+root         108       2  0 21:43 ?        00:00:00 [kworker/R-zswap]
+root         109       2  0 21:43 ?        00:00:00 [kworker/R-zswap]
+root         110       2  0 21:43 ?        00:00:00 [kworker/R-zswap]
+root         111       2  0 21:43 ?        00:00:00 [kworker/R-zswap]
+root         112       2  0 21:43 ?        00:00:00 [kworker/R-zswap]
+root         113       2  0 21:43 ?        00:00:00 [kworker/R-zswap]
+root         114       2  0 21:43 ?        00:00:00 [kworker/R-zswap]
+root         115       2  0 21:43 ?        00:00:00 [kworker/R-zswap]
+root         116       2  0 21:43 ?        00:00:00 [kworker/R-zswap]
+root         117       2  0 21:43 ?        00:00:00 [kworker/R-zswap]
+root         118       2  0 21:43 ?        00:00:00 [kworker/R-zswap]
+root         119       2  0 21:43 ?        00:00:00 [kworker/R-zswap]
+root         120       2  0 21:43 ?        00:00:00 [kworker/R-zswap]
+root         121       2  0 21:43 ?        00:00:00 [kworker/R-zswap]
+root         122       2  0 21:43 ?        00:00:00 [kworker/R-zswap]
+root         123       2  0 21:43 ?        00:00:00 [kworker/R-zswap]
+root         124       2  0 21:43 ?        00:00:00 [kworker/R-zswap]
+root         125       2  0 21:43 ?        00:00:00 [kworker/R-zswap]
+root         126       2  0 21:43 ?        00:00:00 [kworker/R-zswap]
+root         127       2  0 21:43 ?        00:00:00 [kworker/R-zswap]
+root         128       2  0 21:43 ?        00:00:00 [kworker/R-zswap]
+root         129       2  0 21:43 ?        00:00:00 [kworker/R-zswap]
+root         130       2  0 21:43 ?        00:00:00 [kworker/R-zswap]
+root         131       2  0 21:43 ?        00:00:00 [kworker/R-zswap]
+root         132       2  0 21:43 ?        00:00:00 [kworker/R-zswap]
+root         133       2  0 21:43 ?        00:00:00 [kworker/R-zswap]
+root         134       2  0 21:43 ?        00:00:00 [kworker/R-zswap]
+root         135       2  0 21:43 ?        00:00:00 [kworker/R-zswap]
+root         136       2  0 21:43 ?        00:00:00 [kworker/R-zswap]
+root         137       2  0 21:43 ?        00:00:00 [kworker/R-zswap]
+root         138       2  0 21:43 ?        00:00:00 [kworker/R-zswap]
+root         139       2  0 21:43 ?        00:00:00 [kworker/R-zswap]
+root         140       2  0 21:43 ?        00:00:00 [kworker/R-zswap]
+root         141       2  0 21:43 ?        00:00:00 [kworker/R-zswap]
+root         142       2  0 21:43 ?        00:00:00 [kworker/R-zswap]
+root         143       2  0 21:43 ?        00:00:00 [kworker/R-zswap]
+root         144       2  0 21:43 ?        00:00:00 [kworker/R-zswap]
+root         145       2  0 21:43 ?        00:00:00 [kworker/R-zswap]
+root         146       2  0 21:43 ?        00:00:00 [kworker/R-zswap]
+root         147       2  0 21:43 ?        00:00:00 [kworker/R-zswap]
+root         148       2  0 21:43 ?        00:00:00 [kworker/R-zswap]
+root         149       2  0 21:43 ?        00:00:00 [kworker/R-zswap]
+root         150       2  0 21:43 ?        00:00:00 [kworker/R-zswap]
+root         151       2  0 21:43 ?        00:00:00 [kworker/R-zswap]
+root         152       2  0 21:43 ?        00:00:00 [kworker/R-zswap]
+root         153       2  0 21:43 ?        00:00:00 [kworker/R-zswap]
+root         154       2  0 21:43 ?        00:00:00 [kworker/R-zswap]
+root         155       2  0 21:43 ?        00:00:00 [kworker/R-zswap]
+root         156       2  0 21:43 ?        00:00:00 [kworker/R-zswap]
+root         169       2  0 21:43 ?        00:00:02 [kworker/u8:4-events_power_efficient]
+root         171       2  0 21:43 ?        00:00:00 [kworker/R-sdhci]
+root         172       2  0 21:43 ?        00:00:00 [irq/29-mmc0]
+root         198       2  0 21:43 ?        00:00:00 [kworker/2:1H-kblockd]
+root         199       2  0 21:43 ?        00:00:00 [kworker/R-mmc_c]
+root         201       2  0 21:43 ?        00:00:00 [kworker/0:1H-mmc_complete]
+root         239       2  0 21:43 ?        00:00:00 [spi0]
+root         326       2  0 21:43 ?        00:00:00 [jbd2/mmcblk0p2-8]
+root         327       2  0 21:43 ?        00:00:00 [kworker/R-ext4-]
+root         395       1  0 21:43 ?        00:00:01 /usr/lib/systemd/systemd-journald
+root         452       1  0 21:43 ?        00:00:00 /usr/lib/systemd/systemd-udevd
+root         455       2  0 21:43 ?        00:00:00 [psimon]
+root         519       2  0 21:43 ?        00:00:00 [vchiq-keep/0]
+root         521       2  0 21:43 ?        00:00:00 [SMIO]
+root         563       2  0 21:43 ?        00:00:00 [kworker/R-mmal-]
+root         573       2  0 21:43 ?        00:00:00 [kworker/R-mmal-]
+root         574       2  0 21:43 ?        00:00:00 [kworker/R-mmal-]
+root         575       2  0 21:43 ?        00:00:00 [irq/43-feb10000.codec]
+root         580       2  0 21:43 ?        00:00:00 [kworker/R-mmal-]
+root         585       2  0 21:43 ?        00:00:00 [kworker/R-mmal-]
+root         619       2  0 21:43 ?        00:00:00 [kworker/R-mmal-]
+root         626       2  0 21:43 ?        00:00:00 [kworker/R-mmal-]
+root         635       2  0 21:43 ?        00:00:00 [kworker/R-cfg80]
+root         671       2  0 21:43 ?        00:00:00 [kworker/R-brcmf]
+root         675       2  0 21:43 ?        00:00:00 [brcmf_wdog/mmc1:0001:1]
+root         778       2  0 21:43 ?        00:00:00 [card1-crtc0]
+systemd+     855       1  0 21:43 ?        00:00:00 /usr/lib/systemd/systemd-resolved
+systemd+     861       1  0 21:43 ?        00:00:00 /usr/lib/systemd/systemd-timesyncd
+root         955       1  0 21:43 ?        00:00:00 /usr/libexec/bluetooth/bluetoothd
+message+     956       1  0 21:43 ?        00:00:01 @dbus-daemon --system --address=systemd: --nofork --nopidfile --systemd-activation --syslog-only
+root         957       1  0 21:43 tty1     00:00:00 /bin/bash /usr/sbin/oem-config-firstboot
+root         965       1  0 21:43 ?        00:00:01 /usr/sbin/NetworkManager --no-daemon
+root        1043       1  0 21:44 ?        00:00:00 /usr/sbin/wpa_supplicant -u -s -O DIR=/run/wpa_supplicant GROUP=netdev
+root        1068     957  0 21:44 tty1     00:00:00 /usr/bin/python3 /usr/bin/ubiquity-dm vt7 :0 oem /usr/sbin/oem-config-wrapper --only
+root        1074    1068  0 21:44 ?        00:00:05 /usr/lib/xorg/Xorg -br -ac -noreset -nolisten tcp -background none vt1 :0
+root        1084       1  0 21:44 ?        00:00:00 /usr/lib/systemd/systemd-logind
+systemd+    1087       1  0 21:44 ?        00:00:05 /usr/lib/systemd/systemd-oomd
+root        1089       2  0 21:44 ?        00:00:00 [psimon]
+root        1091       1  0 21:44 ?        00:00:01 /usr/lib/systemd/systemd --user
+root        1092    1091  0 21:44 ?        00:00:00 (sd-pam)
+root        1097       2  0 21:44 ?        00:00:00 [psimon]
+root        1105    1091  0 21:44 ?        00:00:00 /usr/bin/dbus-daemon --session --address=systemd: --nofork --nopidfile --systemd-activation --syslog-only
+root        1118    1091  0 21:44 ?        00:00:00 /usr/libexec/dconf-service
+root        1139    1068  0 21:44 tty1     00:00:00 /usr/libexec/gsd-a11y-settings
+root        1140    1068  0 21:44 tty1     00:00:00 /usr/libexec/gsd-keyboard
+root        1144    1068  0 21:44 tty1     00:00:00 /usr/libexec/gsd-media-keys
+root        1147    1068  0 21:44 tty1     00:00:00 /usr/libexec/gsd-power
+root        1148    1068  0 21:44 tty1     00:00:00 /usr/libexec/gsd-xsettings
+root        1149    1068  0 21:44 tty1     00:00:07 gnome-shell --sm-disable --mode=ubiquity
+root        1150    1068  0 21:44 tty1     00:00:00 /bin/sh /usr/sbin/oem-config-wrapper --only
+root        1151    1150  0 21:44 tty1     00:00:07 /usr/bin/python3 /usr/sbin/oem-config --only
+root        1159    1091  0 21:44 ?        00:00:00 /usr/libexec/at-spi-bus-launcher
+root        1166    1159  0 21:44 ?        00:00:00 /usr/bin/dbus-daemon --config-file=/usr/share/defaults/at-spi2/accessibility.conf --nofork --print-address 11 --address=unix:path=/run/user/0/at-spi/bus_0
+root        1185    1091  0 21:44 ?        00:00:00 /usr/libexec/gvfsd
+root        1188    1091  0 21:44 ?        00:00:00 /usr/libexec/at-spi2-registryd --use-gnome-session
+root        1199       1  0 21:44 ?        00:00:00 /usr/libexec/accounts-daemon
+root        1200       1  0 21:44 ?        00:00:00 /usr/libexec/upowerd
+root        1204    1091  0 21:44 ?        00:00:00 /usr/libexec/gvfsd-fuse /run/user/0/gvfs -f
+polkitd     1231       1  0 21:44 ?        00:00:00 /usr/lib/polkit-1/polkitd --no-debug
+root        1274    1149  0 21:44 tty1     00:00:00 /usr/libexec/mutter-x11-frames
+colord      1276       1  0 21:44 ?        00:00:00 /usr/libexec/colord
+root        1313    1091  0 21:44 ?        00:00:00 /usr/libexec/xdg-permission-store
+root        1325    1091  0 21:44 ?        00:00:00 /usr/bin/gjs -m /usr/share/gnome-shell/org.gnome.Shell.Notifications
+root        1345    1149  0 21:44 tty1     00:00:00 ibus-daemon --panel disable --xim
+root        1347    1091  0 21:44 ?        00:00:00 /usr/bin/gjs -m /usr/share/gnome-shell/org.gnome.ScreenSaver
+root        1365    1345  0 21:44 tty1     00:00:00 /usr/libexec/ibus-dconf
+root        1366    1345  0 21:44 tty1     00:00:07 /usr/libexec/ibus-extension-gtk3
+root        1368       1  0 21:44 tty1     00:00:00 /usr/libexec/ibus-x11 --kill-daemon
+root        1370    1091  0 21:44 ?        00:00:00 /usr/libexec/ibus-portal
+avahi       1382       1  0 21:44 ?        00:00:00 avahi-daemon: running [danspi.local]
+root        1384       1  0 21:44 ?        00:00:00 /usr/libexec/power-profiles-daemon
+avahi       1385    1382  0 21:44 ?        00:00:00 avahi-daemon: chroot helper
+root        1405    1091  0 21:44 ?        00:00:00 /usr/libexec/xdg-document-portal
+root        1411    1405  0 21:44 ?        00:00:00 fusermount3 -o rw,nosuid,nodev,fsname=portal,auto_unmount,subtype=portal -- /run/user/0/doc
+root        1416    1345  0 21:44 tty1     00:00:00 /usr/libexec/ibus-engine-simple
+root        1555    1151  0 21:44 tty1     00:00:12 [ubuntu-drivers] <defunct>
+root        1616    1151  0 21:44 tty1     00:00:01 /usr/bin/perl /usr/bin/debconf-communicate -fnoninteractive ubiquity
+root        1618    1151  0 21:44 tty1     00:00:00 log-output -t ubiquity --pass-stdout /usr/lib/ubiquity/localechooser/localechooser
+root        1619    1618  0 21:44 tty1     00:00:00 /bin/sh /usr/lib/ubiquity/localechooser/localechooser
+root        1620    1151  0 21:44 tty1     00:00:00 [canberra-gtk-pl] <defunct>
+rtkit       2655       1  0 21:44 ?        00:00:00 /usr/libexec/rtkit-daemon
+root        2658    1091  0 21:45 ?        00:00:00 /usr/libexec/xdg-desktop-portal-gtk
+root        2664    1091  0 21:45 ?        00:00:00 /usr/libexec/gvfsd-metadata
+root        2668       1  0 21:45 tty2     00:00:00 /bin/login -p --
+dan         2730       1  0 21:46 ?        00:00:00 /usr/lib/systemd/systemd --user
+dan         2731    2730  0 21:46 ?        00:00:00 (sd-pam)
+dan         2741    2730  0 21:46 ?        00:00:00 /usr/bin/pipewire
+dan         2742    2730  0 21:46 ?        00:00:00 /usr/bin/pipewire -c filter-chain.conf
+dan         2743    2730  0 21:46 ?        00:00:00 /usr/bin/wireplumber
+dan         2744    2668  0 21:46 tty2     00:00:01 -bash
+dan         2745    2730  0 21:46 ?        00:00:00 /usr/bin/pipewire-pulse
+dan         2749    2730  0 21:46 ?        00:00:00 /usr/bin/dbus-daemon --session --address=systemd: --nofork --nopidfile --systemd-activation --syslog-only
+root        2787       2  0 21:46 ?        00:00:00 [krfcommd]
+dan         2788    2730  0 21:46 ?        00:00:00 /usr/libexec/xdg-permission-store
+root        2959       2  0 21:49 ?        00:00:00 [kworker/3:0-events]
+root        2960       2  0 21:49 ?        00:00:00 [kworker/2:1-events]
+root        3063       2  0 21:54 ?        00:00:00 [kworker/u9:2-hci0]
+root        3071       1  0 21:54 tty3     00:00:00 /sbin/agetty -o -p -- \u --noclear - linux
+root        3280       2  0 21:57 ?        00:00:02 [kworker/u8:3-events_unbound]
+root        3498       2  0 22:02 ?        00:00:01 [kworker/u8:0-events_power_efficient]
+root        3866       2  0 22:08 ?        00:00:00 [kworker/0:1-events]
+root        3878       2  0 22:08 ?        00:00:00 [kworker/3:2-mm_percpu_wq]
+root        4032       2  0 22:09 ?        00:00:00 [kworker/1:2H-kblockd]
+root        4035       2  0 22:09 ?        00:00:00 [kworker/3:2H]
+root        4068       2  0 22:10 ?        00:00:00 [kworker/1:1-mm_percpu_wq]
+root        4079       2  0 22:10 ?        00:00:00 [kworker/2:2H]
+root        4127       2  0 22:11 ?        00:00:00 [kworker/0:2H-mmc_complete]
+root        4298       2  0 22:13 ?        00:00:00 [kworker/2:0-events_freezable]
+root        4301       2  0 22:14 ?        00:00:00 [kworker/3:1-mm_percpu_wq]
+root        4302       2  0 22:15 ?        00:00:00 [kworker/u8:1-events_power_efficient]
+root        4303       2  0 22:16 ?        00:00:00 [kworker/0:3-events]
+root        4318       2  0 22:17 ?        00:00:00 [kworker/1:2-events]
+root        4496       2  0 22:17 ?        00:00:00 [kworker/0:0H-kblockd]
+root        4497       2  0 22:17 ?        00:00:00 [kworker/1:0H]
+root        4509       1  0 22:17 ?        00:00:00 /usr/libexec/packagekitd
+root        4570       2  0 22:17 ?        00:00:00 [kworker/2:0H]
+root        4613       2  0 22:18 ?        00:00:00 [kworker/3:0H-kblockd]
+root        4631       2  0 22:18 ?        00:00:00 [kworker/3:3-events]
+root        4822       2  0 22:19 ?        00:00:00 [kworker/2:2-events]
+dan         4835    2744 16 22:21 tty2     00:00:00 bash noble2.sh
+dan         4837    4835 33 22:21 tty2     00:00:00 tee -a /home/dan/repair_ssh_install_20260310_222138.log
+dan         4839    4835 99 22:21 tty2     00:00:00 ps -ef
+
++ filtered package processes
+root        1068     957  0 21:44 tty1     00:00:00 /usr/bin/python3 /usr/bin/ubiquity-dm vt7 :0 oem /usr/sbin/oem-config-wrapper --only
+root        1149    1068  0 21:44 tty1     00:00:07 gnome-shell --sm-disable --mode=ubiquity
+root        1616    1151  0 21:44 tty1     00:00:01 /usr/bin/perl /usr/bin/debconf-communicate -fnoninteractive ubiquity
+root        1618    1151  0 21:44 tty1     00:00:00 log-output -t ubiquity --pass-stdout /usr/lib/ubiquity/localechooser/localechooser
+root        1619    1618  0 21:44 tty1     00:00:00 /bin/sh /usr/lib/ubiquity/localechooser/localechooser
+root        4509       1  0 22:17 ?        00:00:00 /usr/libexec/packagekitd
+
++ sudo lsof /var/cache/debconf/config.dat
+COMMAND    PID USER   FD   TYPE DEVICE SIZE/OFF   NODE NAME
+debconf-c 1616 root    4uW  REG  179,2   165483 131406 /var/cache/debconf/config.dat
+
++ sudo lsof /var/lib/dpkg/lock
+
++ sudo lsof /var/lib/dpkg/lock-frontend
+
+--------------------------------------------------
+2) Show current OpenSSH state
+--------------------------------------------------
++ apt-cache policy openssh-server openssh-client openssh-sftp-server
+openssh-server:
+  Installed: 1:9.6p1-3ubuntu13.14
+  Candidate: 1:9.6p1-3ubuntu13.14
+  Version table:
+ *** 1:9.6p1-3ubuntu13.14 500
+        500 http://ports.ubuntu.com/ubuntu-ports noble-updates/main arm64 Packages
+        100 /var/lib/dpkg/status
+     1:9.6p1-3ubuntu13.11 500
+        500 http://ports.ubuntu.com/ubuntu-ports noble-security/main arm64 Packages
+     1:9.6p1-3ubuntu13 500
+        500 http://ports.ubuntu.com/ubuntu-ports noble/main arm64 Packages
+openssh-client:
+  Installed: 1:9.6p1-3ubuntu13.14
+  Candidate: 1:9.6p1-3ubuntu13.14
+  Version table:
+ *** 1:9.6p1-3ubuntu13.14 500
+        500 http://ports.ubuntu.com/ubuntu-ports noble-updates/main arm64 Packages
+        100 /var/lib/dpkg/status
+     1:9.6p1-3ubuntu13.11 500
+        500 http://ports.ubuntu.com/ubuntu-ports noble-security/main arm64 Packages
+     1:9.6p1-3ubuntu13 500
+        500 http://ports.ubuntu.com/ubuntu-ports noble/main arm64 Packages
+openssh-sftp-server:
+  Installed: 1:9.6p1-3ubuntu13.14
+  Candidate: 1:9.6p1-3ubuntu13.14
+  Version table:
+ *** 1:9.6p1-3ubuntu13.14 500
+        500 http://ports.ubuntu.com/ubuntu-ports noble-updates/main arm64 Packages
+        100 /var/lib/dpkg/status
+     1:9.6p1-3ubuntu13.11 500
+        500 http://ports.ubuntu.com/ubuntu-ports noble-security/main arm64 Packages
+     1:9.6p1-3ubuntu13 500
+        500 http://ports.ubuntu.com/ubuntu-ports noble/main arm64 Packages
+
++ dpkg -l | grep openssh
+ii  openssh-client                                1:9.6p1-3ubuntu13.14                     arm64        secure shell (SSH) client, for secure access to remote machines
+iF  openssh-server                                1:9.6p1-3ubuntu13.14                     arm64        secure shell (SSH) server, for secure access from remote machines
+ii  openssh-sftp-server                           1:9.6p1-3ubuntu13.14                     arm64        secure shell (SSH) sftp server module, for SFTP access from remote machines
+
++ dpkg -s openssh-server
+Package: openssh-server
+Status: install ok half-configured
+Priority: optional
+Section: net
+Installed-Size: 2076
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: arm64
+Multi-Arch: foreign
+Source: openssh
+Version: 1:9.6p1-3ubuntu13.14
+Replaces: openssh-client (<< 1:7.9p1-8), ssh, ssh-krb5
+Provides: ssh-server
+Depends: adduser, libpam-modules, libpam-runtime, lsb-base, openssh-client (= 1:9.6p1-3ubuntu13.14), openssh-sftp-server, procps, ucf, debconf (>= 0.5) | debconf-2.0, libaudit1 (>= 1:2.2.1), libc6 (>= 2.38), libcom-err2 (>= 1.43.9), libcrypt1 (>= 1:4.1.0), libgssapi-krb5-2 (>= 1.17), libkrb5-3 (>= 1.13~alpha1+dfsg), libpam0g (>= 0.99.7.1), libselinux1 (>= 3.1~), libssl3t64 (>= 3.0.13), libwrap0 (>= 7.6-4~), zlib1g (>= 1:1.1.4)
+Pre-Depends: init-system-helpers (>= 1.54~)
+Recommends: default-logind | logind | libpam-systemd, ncurses-term, xauth, ssh-import-id
+Suggests: molly-guard, monkeysphere, ssh-askpass, ufw
+Conflicts: sftp, ssh-socks, ssh2
+Conffiles:
+ /etc/default/ssh 500e3cf069fe9a7b9936108eb9d9c035
+ /etc/init.d/ssh 3649a6fe8c18ad1d5245fd91737de507
+ /etc/pam.d/sshd 8b4c7a12b031424b2a9946881da59812
+ /etc/ssh/moduli 366395e79244c54223455e5f83dafba3
+ /etc/ufw/applications.d/openssh-server 486b78d54b93cc9fdc950c1d52ff479e
+Description: secure shell (SSH) server, for secure access from remote machines
+ This is the portable version of OpenSSH, a free implementation of
+ the Secure Shell protocol as specified by the IETF secsh working
+ group.
+ .
+ Ssh (Secure Shell) is a program for logging into a remote machine
+ and for executing commands on a remote machine.
+ It provides secure encrypted communications between two untrusted
+ hosts over an insecure network. X11 connections and arbitrary TCP/IP
+ ports can also be forwarded over the secure channel.
+ It can be used to provide applications with a secure communication
+ channel.
+ .
+ This package provides the sshd server.
+ .
+ In some countries it may be illegal to use any encryption at all
+ without a special permit.
+ .
+ sshd replaces the insecure rshd program, which is obsolete for most
+ purposes.
+Homepage: https://www.openssh.com/
+Original-Maintainer: Debian OpenSSH Maintainers <debian-ssh@lists.debian.org>
+
+--------------------------------------------------
+3) If no package manager is running, clear stale locks
+--------------------------------------------------
+Active package-related process detected.
+Not removing locks.
+
+--------------------------------------------------
+4) Reconfigure pending packages
+--------------------------------------------------
++ sudo dpkg --configure -a
+Setting up openssh-server (1:9.6p1-3ubuntu13.14) ...
+debconf: DbDriver "config": /var/cache/debconf/config.dat is locked by another process: Resource temporarily unavailable
+dpkg: error processing package openssh-server (--configure):
+ installed openssh-server package post-installation script subprocess returned error exit status 1
+Errors were encountered while processing:
+ openssh-server
+
+--------------------------------------------------
+5) Fix broken packages
+--------------------------------------------------
++ sudo apt --fix-broken install -y
+
+WARNING: apt does not have a stable CLI interface. Use with caution in scripts.
+
+Reading package lists...
+Building dependency tree...
+Reading state information...
+0 upgraded, 0 newly installed, 0 to remove and 24 not upgraded.
+1 not fully installed or removed.
+debconf: DbDriver "config": /var/cache/debconf/config.dat is locked by another process: Resource temporarily unavailable
+After this operation, 0 B of additional disk space will be used.
+Setting up openssh-server (1:9.6p1-3ubuntu13.14) ...
+debconf: DbDriver "config": /var/cache/debconf/config.dat is locked by another process: Resource temporarily unavailable
+dpkg: error processing package openssh-server (--configure):
+ installed openssh-server package post-installation script subprocess returned error exit status 1
+Errors were encountered while processing:
+ openssh-server
+E: Sub-process /usr/bin/dpkg returned an error code (1)
+
+--------------------------------------------------
+6) Force consistent OpenSSH package set
+--------------------------------------------------
++ sudo apt install -y openssh-client openssh-sftp-server openssh-server
+
+WARNING: apt does not have a stable CLI interface. Use with caution in scripts.
+
+Reading package lists...
+Building dependency tree...
+Reading state information...
+openssh-client is already the newest version (1:9.6p1-3ubuntu13.14).
+openssh-client set to manually installed.
+openssh-sftp-server is already the newest version (1:9.6p1-3ubuntu13.14).
+openssh-sftp-server set to manually installed.
+openssh-server is already the newest version (1:9.6p1-3ubuntu13.14).
+0 upgraded, 0 newly installed, 0 to remove and 24 not upgraded.
+1 not fully installed or removed.
+debconf: DbDriver "config": /var/cache/debconf/config.dat is locked by another process: Resource temporarily unavailable
+After this operation, 0 B of additional disk space will be used.
+Setting up openssh-server (1:9.6p1-3ubuntu13.14) ...
+debconf: DbDriver "config": /var/cache/debconf/config.dat is locked by another process: Resource temporarily unavailable
+dpkg: error processing package openssh-server (--configure):
+ installed openssh-server package post-installation script subprocess returned error exit status 1
+Errors were encountered while processing:
+ openssh-server
+E: Sub-process /usr/bin/dpkg returned an error code (1)
+
+--------------------------------------------------
+7) Retry configure
+--------------------------------------------------
++ sudo dpkg --configure -a
+Setting up openssh-server (1:9.6p1-3ubuntu13.14) ...
+debconf: DbDriver "config": /var/cache/debconf/config.dat is locked by another process: Resource temporarily unavailable
+dpkg: error processing package openssh-server (--configure):
+ installed openssh-server package post-installation script subprocess returned error exit status 1
+Errors were encountered while processing:
+ openssh-server
+
+--------------------------------------------------
+8) Try enabling SSH if install succeeded
+--------------------------------------------------
++ sudo systemctl enable --now ssh
+Synchronizing state of ssh.service with SysV service script with /usr/lib/systemd/systemd-sysv-install.
+Executing: /usr/lib/systemd/systemd-sysv-install enable ssh
+Created symlink /etc/systemd/system/sshd.service → /usr/lib/systemd/system/ssh.service.
+Created symlink /etc/systemd/system/multi-user.target.wants/ssh.service → /usr/lib/systemd/system/ssh.service.
+Job for ssh.service failed because the control process exited with error code.
+See "systemctl status ssh.service" and "journalctl -xeu ssh.service" for details.
+
++ sudo systemctl status ssh --no-pager
+● ssh.service - OpenBSD Secure Shell server
+     Loaded: loaded (/usr/lib/systemd/system/ssh.service; enabled; preset: enabled)
+     Active: activating (auto-restart) (Result: exit-code) since Tue 2026-03-10 22:22:07 EDT; 99ms ago
+       Docs: man:sshd(8)
+             man:sshd_config(5)
+    Process: 5258 ExecStartPre=/usr/sbin/sshd -t (code=exited, status=1/FAILURE)
+        CPU: 27ms
+
++ sudo ss -tulpn | grep ':22'
+
+--------------------------------------------------
+9) Recent dpkg / apt logs
+--------------------------------------------------
++ tail -n 120 /var/log/dpkg.log
+2026-03-10 16:48:39 configure screen:arm64 4.9.1-1ubuntu1 <none>
+2026-03-10 16:48:39 status half-configured screen:arm64 4.9.1-1ubuntu1
+2026-03-10 16:49:25 startup packages configure
+2026-03-10 16:49:25 configure screen:arm64 4.9.1-1ubuntu1 <none>
+2026-03-10 16:49:25 status half-configured screen:arm64 4.9.1-1ubuntu1
+2026-03-10 16:54:32 startup packages configure
+2026-03-10 16:54:32 configure screen:arm64 4.9.1-1ubuntu1 <none>
+2026-03-10 16:54:32 status half-configured screen:arm64 4.9.1-1ubuntu1
+2026-03-10 16:55:18 startup packages configure
+2026-03-10 16:55:18 configure screen:arm64 4.9.1-1ubuntu1 <none>
+2026-03-10 16:55:18 status half-configured screen:arm64 4.9.1-1ubuntu1
+2026-03-10 17:09:51 startup packages configure
+2026-03-10 17:09:51 configure screen:arm64 4.9.1-1ubuntu1 <none>
+2026-03-10 17:09:51 status half-configured screen:arm64 4.9.1-1ubuntu1
+2026-03-10 17:10:36 startup packages configure
+2026-03-10 17:10:36 configure screen:arm64 4.9.1-1ubuntu1 <none>
+2026-03-10 17:10:36 status half-configured screen:arm64 4.9.1-1ubuntu1
+2026-03-10 21:14:10 startup archives unpack
+2026-03-10 21:14:10 install xclip:arm64 <none> 0.13-3
+2026-03-10 21:14:10 status half-installed xclip:arm64 0.13-3
+2026-03-10 21:14:10 status triggers-pending man-db:arm64 2.12.0-4build2
+2026-03-10 21:14:11 status unpacked xclip:arm64 0.13-3
+2026-03-10 21:14:11 startup packages configure
+2026-03-10 21:14:11 configure screen:arm64 4.9.1-1ubuntu1 <none>
+2026-03-10 21:14:11 status half-configured screen:arm64 4.9.1-1ubuntu1
+2026-03-10 21:14:11 configure xclip:arm64 0.13-3 <none>
+2026-03-10 21:14:11 status unpacked xclip:arm64 0.13-3
+2026-03-10 21:14:11 status half-configured xclip:arm64 0.13-3
+2026-03-10 21:14:11 status installed xclip:arm64 0.13-3
+2026-03-10 21:14:11 trigproc man-db:arm64 2.12.0-4build2 <none>
+2026-03-10 21:14:11 status half-configured man-db:arm64 2.12.0-4build2
+2026-03-10 21:14:13 status installed man-db:arm64 2.12.0-4build2
+2026-03-10 21:42:00 startup packages configure
+2026-03-10 21:42:00 configure screen:arm64 4.9.1-1ubuntu1 <none>
+2026-03-10 21:42:00 status half-configured screen:arm64 4.9.1-1ubuntu1
+2026-03-10 21:42:47 startup packages configure
+2026-03-10 21:42:47 configure screen:arm64 4.9.1-1ubuntu1 <none>
+2026-03-10 21:42:47 status half-configured screen:arm64 4.9.1-1ubuntu1
+2026-03-10 21:42:57 startup packages configure
+2026-03-10 21:42:57 configure screen:arm64 4.9.1-1ubuntu1 <none>
+2026-03-10 21:42:57 status half-configured screen:arm64 4.9.1-1ubuntu1
+2026-03-10 21:51:03 startup packages configure
+2026-03-10 21:51:03 configure screen:arm64 4.9.1-1ubuntu1 <none>
+2026-03-10 21:51:03 status half-configured screen:arm64 4.9.1-1ubuntu1
+2026-03-10 21:53:31 startup packages configure
+2026-03-10 21:53:31 configure screen:arm64 4.9.1-1ubuntu1 <none>
+2026-03-10 21:53:31 status half-configured screen:arm64 4.9.1-1ubuntu1
+2026-03-10 21:55:22 startup packages configure
+2026-03-10 21:55:22 configure screen:arm64 4.9.1-1ubuntu1 <none>
+2026-03-10 21:55:22 status half-configured screen:arm64 4.9.1-1ubuntu1
+2026-03-10 21:57:11 startup packages remove
+2026-03-10 21:57:11 status half-configured screen:arm64 4.9.1-1ubuntu1
+2026-03-10 21:57:12 remove screen:arm64 4.9.1-1ubuntu1 <none>
+2026-03-10 21:57:12 status half-installed screen:arm64 4.9.1-1ubuntu1
+2026-03-10 21:57:12 status triggers-pending man-db:arm64 2.12.0-4build2
+2026-03-10 21:57:12 status triggers-pending install-info:arm64 7.1-3build2
+2026-03-10 21:57:12 status triggers-pending debianutils:arm64 5.17build1
+2026-03-10 21:57:12 status config-files screen:arm64 4.9.1-1ubuntu1
+2026-03-10 21:57:13 trigproc man-db:arm64 2.12.0-4build2 <none>
+2026-03-10 21:57:13 status half-configured man-db:arm64 2.12.0-4build2
+2026-03-10 21:57:15 status installed man-db:arm64 2.12.0-4build2
+2026-03-10 21:57:15 trigproc install-info:arm64 7.1-3build2 <none>
+2026-03-10 21:57:15 status half-configured install-info:arm64 7.1-3build2
+2026-03-10 21:57:16 status installed install-info:arm64 7.1-3build2
+2026-03-10 21:57:16 trigproc debianutils:arm64 5.17build1 <none>
+2026-03-10 21:57:16 status half-configured debianutils:arm64 5.17build1
+2026-03-10 21:57:16 status installed debianutils:arm64 5.17build1
+2026-03-10 21:57:33 startup packages configure
+2026-03-10 22:04:23 startup packages configure
+2026-03-10 22:10:26 startup packages configure
+2026-03-10 22:18:23 startup packages configure
+2026-03-10 22:18:33 startup archives unpack
+2026-03-10 22:18:33 install openssh-sftp-server:arm64 <none> 1:9.6p1-3ubuntu13.14
+2026-03-10 22:18:33 status half-installed openssh-sftp-server:arm64 1:9.6p1-3ubuntu13.14
+2026-03-10 22:18:33 status triggers-pending man-db:arm64 2.12.0-4build2
+2026-03-10 22:18:33 status unpacked openssh-sftp-server:arm64 1:9.6p1-3ubuntu13.14
+2026-03-10 22:18:33 install openssh-server:arm64 <none> 1:9.6p1-3ubuntu13.14
+2026-03-10 22:18:33 status half-installed openssh-server:arm64 1:9.6p1-3ubuntu13.14
+2026-03-10 22:18:33 status triggers-pending ufw:all 0.36.2-6
+2026-03-10 22:18:34 status unpacked openssh-server:arm64 1:9.6p1-3ubuntu13.14
+2026-03-10 22:18:34 install ncurses-term:all <none> 6.4+20240113-1ubuntu2
+2026-03-10 22:18:34 status half-installed ncurses-term:all 6.4+20240113-1ubuntu2
+2026-03-10 22:18:36 status unpacked ncurses-term:all 6.4+20240113-1ubuntu2
+2026-03-10 22:18:36 install ssh-import-id:all <none> 5.11-0ubuntu2.24.04.1
+2026-03-10 22:18:36 status half-installed ssh-import-id:all 5.11-0ubuntu2.24.04.1
+2026-03-10 22:18:37 status unpacked ssh-import-id:all 5.11-0ubuntu2.24.04.1
+2026-03-10 22:18:37 startup packages configure
+2026-03-10 22:18:37 configure openssh-sftp-server:arm64 1:9.6p1-3ubuntu13.14 <none>
+2026-03-10 22:18:37 status unpacked openssh-sftp-server:arm64 1:9.6p1-3ubuntu13.14
+2026-03-10 22:18:37 status half-configured openssh-sftp-server:arm64 1:9.6p1-3ubuntu13.14
+2026-03-10 22:18:37 status installed openssh-sftp-server:arm64 1:9.6p1-3ubuntu13.14
+2026-03-10 22:18:37 configure openssh-server:arm64 1:9.6p1-3ubuntu13.14 <none>
+2026-03-10 22:18:37 status unpacked openssh-server:arm64 1:9.6p1-3ubuntu13.14
+2026-03-10 22:18:37 status half-configured openssh-server:arm64 1:9.6p1-3ubuntu13.14
+2026-03-10 22:18:37 configure ssh-import-id:all 5.11-0ubuntu2.24.04.1 <none>
+2026-03-10 22:18:37 status unpacked ssh-import-id:all 5.11-0ubuntu2.24.04.1
+2026-03-10 22:18:37 status half-configured ssh-import-id:all 5.11-0ubuntu2.24.04.1
+2026-03-10 22:18:38 status installed ssh-import-id:all 5.11-0ubuntu2.24.04.1
+2026-03-10 22:18:38 configure ncurses-term:all 6.4+20240113-1ubuntu2 <none>
+2026-03-10 22:18:38 status unpacked ncurses-term:all 6.4+20240113-1ubuntu2
+2026-03-10 22:18:38 status half-configured ncurses-term:all 6.4+20240113-1ubuntu2
+2026-03-10 22:18:38 status installed ncurses-term:all 6.4+20240113-1ubuntu2
+2026-03-10 22:18:38 trigproc man-db:arm64 2.12.0-4build2 <none>
+2026-03-10 22:18:38 status half-configured man-db:arm64 2.12.0-4build2
+2026-03-10 22:18:41 status installed man-db:arm64 2.12.0-4build2
+2026-03-10 22:18:41 trigproc ufw:all 0.36.2-6 <none>
+2026-03-10 22:18:41 status half-configured ufw:all 0.36.2-6
+2026-03-10 22:18:41 status installed ufw:all 0.36.2-6
+2026-03-10 22:21:40 startup packages configure
+2026-03-10 22:21:40 configure openssh-server:arm64 1:9.6p1-3ubuntu13.14 <none>
+2026-03-10 22:21:40 status half-configured openssh-server:arm64 1:9.6p1-3ubuntu13.14
+2026-03-10 22:21:47 startup packages configure
+2026-03-10 22:21:47 configure openssh-server:arm64 1:9.6p1-3ubuntu13.14 <none>
+2026-03-10 22:21:47 status half-configured openssh-server:arm64 1:9.6p1-3ubuntu13.14
+2026-03-10 22:21:56 startup packages configure
+2026-03-10 22:21:56 configure openssh-server:arm64 1:9.6p1-3ubuntu13.14 <none>
+2026-03-10 22:21:56 status half-configured openssh-server:arm64 1:9.6p1-3ubuntu13.14
+2026-03-10 22:22:02 startup packages configure
+2026-03-10 22:22:02 configure openssh-server:arm64 1:9.6p1-3ubuntu13.14 <none>
+2026-03-10 22:22:02 status half-configured openssh-server:arm64 1:9.6p1-3ubuntu13.14
+
++ tail -n 120 /var/log/apt/term.log
+Setting up libgcc-13-dev:arm64 (13.3.0-6ubuntu2~24.04.1) ...
+Setting up cmake (3.28.3-1build7) ...
+Setting up libc6-dev:arm64 (2.39-0ubuntu8.7) ...
+Setting up libstdc++-13-dev:arm64 (13.3.0-6ubuntu2~24.04.1) ...
+Setting up gcc-13-aarch64-linux-gnu (13.3.0-6ubuntu2~24.04.1) ...
+Setting up gcc-13 (13.3.0-6ubuntu2~24.04.1) ...
+Setting up g++-13-aarch64-linux-gnu (13.3.0-6ubuntu2~24.04.1) ...
+Setting up gcc-aarch64-linux-gnu (4:13.2.0-7ubuntu1) ...
+Setting up g++-13 (13.3.0-6ubuntu2~24.04.1) ...
+Setting up gcc (4:13.2.0-7ubuntu1) ...
+Setting up g++-aarch64-linux-gnu (4:13.2.0-7ubuntu1) ...
+Setting up g++ (4:13.2.0-7ubuntu1) ...
+update-alternatives: using /usr/bin/g++ to provide /usr/bin/c++ (c++) in auto mode
+Setting up build-essential (12.10ubuntu1) ...
+Processing triggers for install-info (7.1-3build2) ...
+Processing triggers for desktop-file-utils (0.27-2build1) ...
+Processing triggers for hicolor-icon-theme (0.17-2) ...
+Processing triggers for gnome-menus (3.36.0-1.1ubuntu3) ...
+Processing triggers for libc-bin (2.39-0ubuntu8.7) ...
+Processing triggers for man-db (2.12.0-4build2) ...
+Processing triggers for debianutils (5.17build1) ...
+Errors were encountered while processing:
+ screen
+Log ended: 2026-03-10  16:43:09
+
+Log started: 2026-03-10  16:49:25
+Log ended: 2026-03-10  16:49:26
+
+Log started: 2026-03-10  16:55:18
+Log ended: 2026-03-10  16:55:19
+
+Log started: 2026-03-10  17:10:36
+Log ended: 2026-03-10  17:10:37
+
+Log started: 2026-03-10  21:14:10
+Selecting previously unselected package xclip.
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 143143 files and directories currently installed.)
+Preparing to unpack .../xclip_0.13-3_arm64.deb ...
+Unpacking xclip (0.13-3) ...
+Setting up screen (4.9.1-1ubuntu1) ...
+debconf: DbDriver "config": /var/cache/debconf/config.dat is locked by another process: Resource temporarily unavailable
+[1mdpkg:[0m error processing package screen (--configure):
+ installed screen package post-installation script subprocess returned error exit status 1
+Setting up xclip (0.13-3) ...
+Processing triggers for man-db (2.12.0-4build2) ...
+OkErrors were encountered while processing:
+ screen
+Log ended: 2026-03-10  21:14:13
+
+Log started: 2026-03-10  21:42:47
+Setting up screen (4.9.1-1ubuntu1) ...
+debconf: DbDriver "config": /var/cache/debconf/config.dat is locked by another process: Resource temporarily unavailable
+[1mdpkg:[0m error processing package screen (--configure):
+ installed screen package post-installation script subprocess returned error exit status 1
+Errors were encountered while processing:
+ screen
+Log ended: 2026-03-10  21:42:48
+
+Log started: 2026-03-10  21:42:57
+Setting up screen (4.9.1-1ubuntu1) ...
+debconf: DbDriver "config": /var/cache/debconf/config.dat is locked by another process: Resource temporarily unavailable
+[1mdpkg:[0m error processing package screen (--configure):
+ installed screen package post-installation script subprocess returned error exit status 1
+Errors were encountered while processing:
+ screen
+Log ended: 2026-03-10  21:42:57
+
+Log started: 2026-03-10  21:51:03
+Setting up screen (4.9.1-1ubuntu1) ...
+debconf: DbDriver "config": /var/cache/debconf/config.dat is locked by another process: Resource temporarily unavailable
+[1mdpkg:[0m error processing package screen (--configure):
+ installed screen package post-installation script subprocess returned error exit status 1
+Errors were encountered while processing:
+ screen
+Log ended: 2026-03-10  21:51:04
+
+Log started: 2026-03-10  22:18:33
+Selecting previously unselected package openssh-sftp-server.
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 143097 files and directories currently installed.)
+Preparing to unpack .../openssh-sftp-server_1%3a9.6p1-3ubuntu13.14_arm64.deb ...
+Unpacking openssh-sftp-server (1:9.6p1-3ubuntu13.14) ...
+Selecting previously unselected package openssh-server.
+Preparing to unpack .../openssh-server_1%3a9.6p1-3ubuntu13.14_arm64.deb ...
+Unpacking openssh-server (1:9.6p1-3ubuntu13.14) ...
+Selecting previously unselected package ncurses-term.
+Preparing to unpack .../ncurses-term_6.4+20240113-1ubuntu2_all.deb ...
+Unpacking ncurses-term (6.4+20240113-1ubuntu2) ...
+Selecting previously unselected package ssh-import-id.
+Preparing to unpack .../ssh-import-id_5.11-0ubuntu2.24.04.1_all.deb ...
+Unpacking ssh-import-id (5.11-0ubuntu2.24.04.1) ...
+Setting up openssh-sftp-server (1:9.6p1-3ubuntu13.14) ...
+Setting up openssh-server (1:9.6p1-3ubuntu13.14) ...
+debconf: DbDriver "config": /var/cache/debconf/config.dat is locked by another process: Resource temporarily unavailable
+dpkg: error processing package openssh-server (--configure):
+ installed openssh-server package post-installation script subprocess returned error exit status 1
+Setting up ssh-import-id (5.11-0ubuntu2.24.04.1) ...
+Setting up ncurses-term (6.4+20240113-1ubuntu2) ...
+Processing triggers for man-db (2.12.0-4build2) ...
+Processing triggers for ufw (0.36.2-6) ...
+Errors were encountered while processing:
+ openssh-server
+Log ended: 2026-03-10  22:18:42
+
+Log started: 2026-03-10  22:21:46
+Setting up openssh-server (1:9.6p1-3ubuntu13.14) ...
+debconf: DbDriver "config": /var/cache/debconf/config.dat is locked by another process: Resource temporarily unavailable
+dpkg: error processing package openssh-server (--configure):
+ installed openssh-server package post-installation script subprocess returned error exit status 1
+Errors were encountered while processing:
+ openssh-server
+Log ended: 2026-03-10  22:21:47
+
+Log started: 2026-03-10  22:21:56
+Setting up openssh-server (1:9.6p1-3ubuntu13.14) ...
+debconf: DbDriver "config": /var/cache/debconf/config.dat is locked by another process: Resource temporarily unavailable
+dpkg: error processing package openssh-server (--configure):
+ installed openssh-server package post-installation script subprocess returned error exit status 1
+Errors were encountered while processing:
+ openssh-server
+Log ended: 2026-03-10  22:21:57
+
+==================================================
+Done
+Paste this log if SSH still fails:
+/home/dan/repair_ssh_install_20260310_222138.log
+==================================================
