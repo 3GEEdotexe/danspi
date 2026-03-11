@@ -1,0 +1,1241 @@
+============================================================
+APT / DPKG / OPENSSH DEBUG LOG
+============================================================
+Timestamp: 2026-03-10T22:04:07-04:00
+User: dan
+Host: danspi
+Kernel: Linux danspi 6.8.0-1048-raspi #52-Ubuntu SMP PREEMPT_DYNAMIC Thu Feb 12 14:35:58 UTC 2026 aarch64 aarch64 aarch64 GNU/Linux
+Arch: arm64
+
+
+============================================================
+OS RELEASE
+============================================================
+
++ cat /etc/os-release
+PRETTY_NAME="Ubuntu 24.04.4 LTS"
+NAME="Ubuntu"
+VERSION_ID="24.04"
+VERSION="24.04.4 LTS (Noble Numbat)"
+VERSION_CODENAME=noble
+ID=ubuntu
+ID_LIKE=debian
+HOME_URL="https://www.ubuntu.com/"
+SUPPORT_URL="https://help.ubuntu.com/"
+BUG_REPORT_URL="https://bugs.launchpad.net/ubuntu/"
+PRIVACY_POLICY_URL="https://www.ubuntu.com/legal/terms-and-policies/privacy-policy"
+UBUNTU_CODENAME=noble
+LOGO=ubuntu-logo
+
+============================================================
+APT VERSION / DPKG VERSION
+============================================================
+
++ apt --version
+apt 2.8.3 (arm64)
+
++ dpkg --version
+Debian 'dpkg' package management program version 1.22.6 (arm64).
+This is free software; see the GNU General Public License version 2 or
+later for copying conditions. There is NO warranty.
+
+============================================================
+NETWORK / NAME RESOLUTION
+============================================================
+
++ hostname -I
+192.168.1.57 
+
++ ip addr
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host noprefixroute 
+       valid_lft forever preferred_lft forever
+2: eth0: <NO-CARRIER,BROADCAST,MULTICAST,UP> mtu 1500 qdisc mq state DOWN group default qlen 1000
+    link/ether e4:5f:01:d4:46:5e brd ff:ff:ff:ff:ff:ff
+3: wlan0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000
+    link/ether e4:5f:01:d4:46:5f brd ff:ff:ff:ff:ff:ff
+    inet 192.168.1.57/24 brd 192.168.1.255 scope global dynamic noprefixroute wlan0
+       valid_lft 85201sec preferred_lft 85201sec
+    inet6 fe80::e65f:1ff:fed4:465f/64 scope link 
+       valid_lft forever preferred_lft forever
+
++ ip route
+default via 192.168.1.1 dev wlan0 proto dhcp src 192.168.1.57 metric 600 
+192.168.1.0/24 dev wlan0 proto kernel scope link src 192.168.1.57 metric 600 
+
++ getent hosts ports.ubuntu.com
+2620:2d:4002:1::10b ports.ubuntu.com
+2a06:bc80:0:1000::15 ports.ubuntu.com
+2a06:bc80:0:1000::13 ports.ubuntu.com
+2620:2d:4002:1::10a ports.ubuntu.com
+2a06:bc80:0:1000::14 ports.ubuntu.com
+
++ getent hosts archive.ubuntu.com
+2a06:bc80:0:1000::17 archive.ubuntu.com
+2620:2d:4000:1::101 archive.ubuntu.com
+2620:2d:4000:1::103 archive.ubuntu.com
+2620:2d:4002:1::102 archive.ubuntu.com
+2a06:bc80:0:1000::16 archive.ubuntu.com
+2a06:bc80:0:1000::18 archive.ubuntu.com
+2620:2d:4000:1::102 archive.ubuntu.com
+2620:2d:4002:1::101 archive.ubuntu.com
+
++ getent hosts security.ubuntu.com
+2a06:bc80:0:1000::16 security.ubuntu.com
+2a06:bc80:0:1000::18 security.ubuntu.com
+2620:2d:4002:1::101 security.ubuntu.com
+2620:2d:4000:1::102 security.ubuntu.com
+2620:2d:4000:1::101 security.ubuntu.com
+2620:2d:4000:1::103 security.ubuntu.com
+2a06:bc80:0:1000::17 security.ubuntu.com
+2620:2d:4002:1::102 security.ubuntu.com
+
+============================================================
+APT SOURCES
+============================================================
+
++ cat /etc/apt/sources.list
+# Ubuntu sources have moved to the /etc/apt/sources.list.d/ubuntu.sources
+# file, which uses the deb822 format. Use deb822-formatted .sources files
+# to manage package sources in the /etc/apt/sources.list.d/ directory.
+# See the sources.list(5) manual page for details.
+
++ find /etc/apt/sources.list.d -maxdepth 1 -type f
+/etc/apt/sources.list.d/ubuntu.sources
+
++ cat /etc/apt/sources.list.d/ubuntu.sources
+## Ubuntu distribution repository
+##
+## The following settings can be adjusted to configure which packages to use from Ubuntu.
+## Mirror your choices (except for URIs and Suites) in the security section below to
+## ensure timely security updates.
+##
+## Types: Append deb-src to enable the fetching of source package.
+## URIs: A URL to the repository (you may add multiple URLs)
+## Suites: The following additional suites can be configured
+##   <name>-updates   - Major bug fix updates produced after the final release of the
+##                      distribution.
+##   <name>-backports - software from this repository may not have been tested as
+##                      extensively as that contained in the main release, although it includes
+##                      newer versions of some applications which may provide useful features.
+##                      Also, please note that software in backports WILL NOT receive any review
+##                      or updates from the Ubuntu security team.
+## Components: Aside from main, the following components can be added to the list
+##   restricted  - Software that may not be under a free license, or protected by patents.
+##   universe    - Community maintained packages. Software in this repository receives maintenance
+##                 from volunteers in the Ubuntu community, or a 10 year security maintenance
+##                 commitment from Canonical when an Ubuntu Pro subscription is attached.
+##   multiverse  - Community maintained of restricted. Software from this repository is
+##                 ENTIRELY UNSUPPORTED by the Ubuntu team, and may not be under a free
+##                 licence. Please satisfy yourself as to your rights to use the software.
+##                 Also, please note that software in multiverse WILL NOT receive any
+##                 review or updates from the Ubuntu security team.
+##
+## See the sources.list(5) manual page for further settings.
+Types: deb
+URIs: http://ports.ubuntu.com/ubuntu-ports/
+Suites: noble
+Components: main restricted universe multiverse
+Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg
+
+## Ubuntu security updates. Aside from URIs and Suites,
+## this should mirror your choices in the previous section.
+Types: deb
+URIs: http://ports.ubuntu.com/ubuntu-ports/
+Suites: noble-security
+Components: main restricted universe multiverse
+Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg
+
+
+============================================================
+APT SOURCES (NON-COMMENT LINES)
+============================================================
++ grep -Rhv '^[[:space:]]*#' /etc/apt/sources.list /etc/apt/sources.list.d/*.list /etc/apt/sources.list.d/*.sources
+Types: deb
+URIs: http://ports.ubuntu.com/ubuntu-ports/
+Suites: noble
+Components: main restricted universe multiverse
+Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg
+
+Types: deb
+URIs: http://ports.ubuntu.com/ubuntu-ports/
+Suites: noble-security
+Components: main restricted universe multiverse
+Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg
+
+
+============================================================
+PACKAGE HOLDS
+============================================================
+
++ apt-mark showhold
+
+============================================================
+APT POLICY - OPENSSH / SCREEN / CORE
+============================================================
+
++ apt policy openssh-server openssh-client openssh-sftp-server screen ubuntu-keyring apt dpkg
+
+WARNING: apt does not have a stable CLI interface. Use with caution in scripts.
+
+openssh-server:
+  Installed: (none)
+  Candidate: 1:9.6p1-3ubuntu13.11
+  Version table:
+     1:9.6p1-3ubuntu13.11 500
+        500 http://ports.ubuntu.com/ubuntu-ports noble-security/main arm64 Packages
+     1:9.6p1-3ubuntu13 500
+        500 http://ports.ubuntu.com/ubuntu-ports noble/main arm64 Packages
+openssh-client:
+  Installed: 1:9.6p1-3ubuntu13.14
+  Candidate: 1:9.6p1-3ubuntu13.14
+  Version table:
+ *** 1:9.6p1-3ubuntu13.14 100
+        100 /var/lib/dpkg/status
+     1:9.6p1-3ubuntu13.11 500
+        500 http://ports.ubuntu.com/ubuntu-ports noble-security/main arm64 Packages
+     1:9.6p1-3ubuntu13 500
+        500 http://ports.ubuntu.com/ubuntu-ports noble/main arm64 Packages
+openssh-sftp-server:
+  Installed: (none)
+  Candidate: 1:9.6p1-3ubuntu13.11
+  Version table:
+     1:9.6p1-3ubuntu13.11 500
+        500 http://ports.ubuntu.com/ubuntu-ports noble-security/main arm64 Packages
+     1:9.6p1-3ubuntu13 500
+        500 http://ports.ubuntu.com/ubuntu-ports noble/main arm64 Packages
+screen:
+  Installed: (none)
+  Candidate: 4.9.1-1ubuntu1
+  Version table:
+     4.9.1-1ubuntu1 500
+        500 http://ports.ubuntu.com/ubuntu-ports noble-security/main arm64 Packages
+        100 /var/lib/dpkg/status
+     4.9.1-1build1 500
+        500 http://ports.ubuntu.com/ubuntu-ports noble/main arm64 Packages
+ubuntu-keyring:
+  Installed: 2023.11.28.1
+  Candidate: 2023.11.28.1
+  Version table:
+ *** 2023.11.28.1 500
+        500 http://ports.ubuntu.com/ubuntu-ports noble/main arm64 Packages
+        100 /var/lib/dpkg/status
+apt:
+  Installed: 2.8.3
+  Candidate: 2.8.3
+  Version table:
+ *** 2.8.3 100
+        100 /var/lib/dpkg/status
+     2.7.14build2 500
+        500 http://ports.ubuntu.com/ubuntu-ports noble/main arm64 Packages
+dpkg:
+  Installed: 1.22.6ubuntu6.5
+  Candidate: 1.22.6ubuntu6.5
+  Version table:
+ *** 1.22.6ubuntu6.5 500
+        500 http://ports.ubuntu.com/ubuntu-ports noble-security/main arm64 Packages
+        100 /var/lib/dpkg/status
+     1.22.6ubuntu6 500
+        500 http://ports.ubuntu.com/ubuntu-ports noble/main arm64 Packages
+
+============================================================
+INSTALLED PACKAGE STATES
+============================================================
+
++ dpkg -l | grep -E 'screen|openssh|apt|dpkg'
+ii  apt                                           2.8.3                                    arm64        commandline package manager
+ii  apt-config-icons                              1.0.2-1build6                            all          APT configuration snippet to enable icon downloads
+ii  apt-config-icons-hidpi                        1.0.2-1build6                            all          APT configuration snippet to enable HiDPI icon downloads
+ii  apt-utils                                     2.8.3                                    arm64        package management related utility programs
+ii  aptdaemon                                     1.1.1+bzr982-0ubuntu44                   all          transaction based package management service
+ii  aptdaemon-data                                1.1.1+bzr982-0ubuntu44                   all          data files for clients
+ii  dpkg                                          1.22.6ubuntu6.5                          arm64        Debian package management system
+ii  dpkg-dev                                      1.22.6ubuntu6.5                          all          Debian package development tools
+ii  dpkg-repack                                   1.52                                     all          Debian package archiving tool
+ii  laptop-detect                                 0.16                                     all          system chassis type checker
+ii  libapt-pkg6.0t64:arm64                        2.8.3                                    arm64        package management runtime library
+ii  libatk-adaptor:arm64                          2.52.0-1build1                           arm64        AT-SPI 2 toolkit bridge
+ii  libdpkg-perl                                  1.22.6ubuntu6.5                          all          Dpkg perl modules
+ii  libfreeaptx0:arm64                            0.1.1-2build1                            arm64        Free implementation of aptX
+ii  libpcap0.8t64:arm64                           1.10.4-4.1ubuntu3                        arm64        system interface for user-level packet capture
+ii  libraptor2-0:arm64                            2.0.16-3ubuntu0.1                        arm64        Raptor 2 RDF syntax library
+ii  mtr-tiny                                      0.95-1.1ubuntu0.1                        arm64        Full screen ncurses traceroute tool
+ii  openssh-client                                1:9.6p1-3ubuntu13.14                     arm64        secure shell (SSH) client, for secure access to remote machines
+ii  orca                                          46.1-1ubuntu1                            all          Scriptable screen reader
+ii  python-apt-common                             2.7.7ubuntu5.2                           all          Python interface to libapt-pkg (locales)
+ii  python3-apt                                   2.7.7ubuntu5.2                           arm64        Python 3 interface to libapt-pkg
+ii  python3-aptdaemon                             1.1.1+bzr982-0ubuntu44                   all          Python 3 module for the server and client of aptdaemon
+ii  python3-aptdaemon.gtk3widgets                 1.1.1+bzr982-0ubuntu44                   all          Python 3 GTK+ 3 widgets to run an aptdaemon client
+rc  screen                                        4.9.1-1ubuntu1                           arm64        terminal multiplexer with VT100/ANSI terminal emulation
+ii  update-manager                                1:24.04.12                               all          GNOME application that manages apt updates
+
+============================================================
+BROKEN / HALF-INSTALLED PACKAGE AUDIT
+============================================================
+
++ dpkg --audit
+
++ dpkg -C
+
+============================================================
+PACKAGE STATUS DETAILS
+============================================================
+
++ dpkg -s screen
+Package: screen
+Status: deinstall ok config-files
+Priority: standard
+Section: misc
+Installed-Size: 979
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: arm64
+Version: 4.9.1-1ubuntu1
+Depends: libc6 (>= 2.38), libcrypt1 (>= 1:4.1.0), libpam0g (>= 0.99.7.1), libtinfo6 (>= 6), libutempter0 (>= 1.1.5), debianutils (>= 5.3-1~)
+Suggests: byobu | screenie | iselect (>= 1.4.0-1), ncurses-term
+Conffiles:
+ /etc/init.d/screen-cleanup 44ec7824f5ef10df73e92ad064331ea0
+ /etc/screenrc 12c245238eb8b653625bba27dc81df6a
+Description: terminal multiplexer with VT100/ANSI terminal emulation
+ GNU Screen is a terminal multiplexer that runs several separate "screens" on
+ a single physical character-based terminal. Each virtual terminal emulates a
+ DEC VT100 plus several ANSI X3.64 and ISO 2022 functions. Screen sessions
+ can be detached and resumed later on a different terminal.
+ .
+ Screen also supports a whole slew of other features, including configurable
+ input and output translation, serial port support, configurable logging,
+ and multi-user support.
+Homepage: https://savannah.gnu.org/projects/screen
+Original-Maintainer: Axel Beckert <abe@debian.org>
+
++ dpkg -s openssh-server
+dpkg-query: package 'openssh-server' is not installed and no information is available
+Use dpkg --info (= dpkg-deb --info) to examine archive files.
+
++ dpkg -s openssh-client
+Package: openssh-client
+Status: install ok installed
+Priority: standard
+Section: net
+Installed-Size: 3624
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: arm64
+Multi-Arch: foreign
+Source: openssh
+Version: 1:9.6p1-3ubuntu13.14
+Replaces: openssh-sk-helper, ssh, ssh-krb5
+Provides: ssh-client
+Depends: adduser, passwd, libc6 (>= 2.38), libedit2 (>= 2.11-20080614-0), libfido2-1 (>= 1.8.0), libgssapi-krb5-2 (>= 1.17), libselinux1 (>= 3.1~), libssl3t64 (>= 3.0.13), zlib1g (>= 1:1.1.4)
+Recommends: xauth
+Suggests: keychain, libpam-ssh, monkeysphere, ssh-askpass
+Breaks: openssh-sk-helper
+Conflicts: sftp
+Conffiles:
+ /etc/ssh/ssh_config d11fe67b3cd9180e1c0e888c5e5b93f6
+Description: secure shell (SSH) client, for secure access to remote machines
+ This is the portable version of OpenSSH, a free implementation of
+ the Secure Shell protocol as specified by the IETF secsh working
+ group.
+ .
+ Ssh (Secure Shell) is a program for logging into a remote machine
+ and for executing commands on a remote machine.
+ It provides secure encrypted communications between two untrusted
+ hosts over an insecure network. X11 connections and arbitrary TCP/IP
+ ports can also be forwarded over the secure channel.
+ It can be used to provide applications with a secure communication
+ channel.
+ .
+ This package provides the ssh, scp and sftp clients, the ssh-agent
+ and ssh-add programs to make public key authentication more convenient,
+ and the ssh-keygen, ssh-keyscan, ssh-copy-id and ssh-argv0 utilities.
+ .
+ In some countries it may be illegal to use any encryption at all
+ without a special permit.
+ .
+ ssh replaces the insecure rsh, rcp and rlogin programs, which are
+ obsolete for most purposes.
+Homepage: https://www.openssh.com/
+Original-Maintainer: Debian OpenSSH Maintainers <debian-ssh@lists.debian.org>
+
++ dpkg -s openssh-sftp-server
+dpkg-query: package 'openssh-sftp-server' is not installed and no information is available
+Use dpkg --info (= dpkg-deb --info) to examine archive files.
+
+============================================================
+SCREEN PACKAGE FILES / MAINTAINER SCRIPTS
+============================================================
+
++ dpkg-query -L screen
+/etc
+/etc/init.d
+/etc/init.d/screen-cleanup
+/etc/screenrc
+
++ ls -l /var/lib/dpkg/info/screen.postinst
+
++ ls -l /var/lib/dpkg/info/screen.prerm
+
++ ls -l /var/lib/dpkg/info/screen.postrm
+-rwxr-xr-x 1 root root 616 Jan 22 14:59 /var/lib/dpkg/info/screen.postrm
++ sed -n '1,220p' /var/lib/dpkg/info/screen.postrm
+#!/bin/sh
+set -e
+
+if [ "$1" = purge ] || [ "$1" = remove ]; then
+  rm -rf /run/screen
+fi
+
+if [ "$1" = purge ]; then
+  rm -vf /etc/tmpfiles.d/screen-cleanup.conf
+
+  # LP #1462692
+  rm -f /lib/systemd/system/screen-cleanup.service
+  rmdir -p --ignore-fail-on-non-empty /lib/systemd/system
+fi
+
+# Automatically added by dh_installinit/13.14.1ubuntu5
+if [ "$1" = "remove" ] && [ -x "/etc/init.d/screen-cleanup" ] ; then
+	chmod -x "/etc/init.d/screen-cleanup" >/dev/null || true
+fi
+if [ -z "${DPKG_ROOT:-}" ] && [ "$1" = "purge" ] ; then
+	update-rc.d screen-cleanup remove >/dev/null
+fi
+# End automatically added section
+
+
++ ls -l /var/lib/dpkg/info/screen.list
+-rw-r--r-- 1 root root 58 Mar 10 21:57 /var/lib/dpkg/info/screen.list
++ sed -n '1,220p' /var/lib/dpkg/info/screen.list
+/etc
+/etc/init.d
+/etc/init.d/screen-cleanup
+/etc/screenrc
+
++ ls -l /var/lib/dpkg/info/screen.md5sums
+
+============================================================
+APT CACHE / CANDIDATE VERSIONS
+============================================================
+
++ apt-cache policy openssh-server openssh-client openssh-sftp-server screen
+openssh-server:
+  Installed: (none)
+  Candidate: 1:9.6p1-3ubuntu13.11
+  Version table:
+     1:9.6p1-3ubuntu13.11 500
+        500 http://ports.ubuntu.com/ubuntu-ports noble-security/main arm64 Packages
+     1:9.6p1-3ubuntu13 500
+        500 http://ports.ubuntu.com/ubuntu-ports noble/main arm64 Packages
+openssh-client:
+  Installed: 1:9.6p1-3ubuntu13.14
+  Candidate: 1:9.6p1-3ubuntu13.14
+  Version table:
+ *** 1:9.6p1-3ubuntu13.14 100
+        100 /var/lib/dpkg/status
+     1:9.6p1-3ubuntu13.11 500
+        500 http://ports.ubuntu.com/ubuntu-ports noble-security/main arm64 Packages
+     1:9.6p1-3ubuntu13 500
+        500 http://ports.ubuntu.com/ubuntu-ports noble/main arm64 Packages
+openssh-sftp-server:
+  Installed: (none)
+  Candidate: 1:9.6p1-3ubuntu13.11
+  Version table:
+     1:9.6p1-3ubuntu13.11 500
+        500 http://ports.ubuntu.com/ubuntu-ports noble-security/main arm64 Packages
+     1:9.6p1-3ubuntu13 500
+        500 http://ports.ubuntu.com/ubuntu-ports noble/main arm64 Packages
+screen:
+  Installed: (none)
+  Candidate: 4.9.1-1ubuntu1
+  Version table:
+     4.9.1-1ubuntu1 500
+        500 http://ports.ubuntu.com/ubuntu-ports noble-security/main arm64 Packages
+        100 /var/lib/dpkg/status
+     4.9.1-1build1 500
+        500 http://ports.ubuntu.com/ubuntu-ports noble/main arm64 Packages
+
++ apt-cache madison openssh-server openssh-client openssh-sftp-server screen
+openssh-server | 1:9.6p1-3ubuntu13.11 | http://ports.ubuntu.com/ubuntu-ports noble-security/main arm64 Packages
+openssh-server | 1:9.6p1-3ubuntu13 | http://ports.ubuntu.com/ubuntu-ports noble/main arm64 Packages
+openssh-client | 1:9.6p1-3ubuntu13.11 | http://ports.ubuntu.com/ubuntu-ports noble-security/main arm64 Packages
+openssh-client | 1:9.6p1-3ubuntu13 | http://ports.ubuntu.com/ubuntu-ports noble/main arm64 Packages
+openssh-sftp-server | 1:9.6p1-3ubuntu13.11 | http://ports.ubuntu.com/ubuntu-ports noble-security/main arm64 Packages
+openssh-sftp-server | 1:9.6p1-3ubuntu13 | http://ports.ubuntu.com/ubuntu-ports noble/main arm64 Packages
+    screen | 4.9.1-1ubuntu1 | http://ports.ubuntu.com/ubuntu-ports noble-security/main arm64 Packages
+    screen | 4.9.1-1build1 | http://ports.ubuntu.com/ubuntu-ports noble/main arm64 Packages
+
+============================================================
+SIMULATED INSTALL / REPAIR ACTIONS
+============================================================
+
++ sudo apt -s --fix-broken install
+
+WARNING: apt does not have a stable CLI interface. Use with caution in scripts.
+
+Reading package lists...
+Building dependency tree...
+Reading state information...
+0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
+
++ sudo apt -s install openssh-server
+
+WARNING: apt does not have a stable CLI interface. Use with caution in scripts.
+
+Reading package lists...
+Building dependency tree...
+Reading state information...
+Some packages could not be installed. This may mean that you have
+requested an impossible situation or if you are using the unstable
+distribution that some required packages have not yet been created
+or been moved out of Incoming.
+The following information may help to resolve the situation:
+
+The following packages have unmet dependencies:
+ openssh-server : Depends: openssh-client (= 1:9.6p1-3ubuntu13.11) but 1:9.6p1-3ubuntu13.14 is to be installed
+                  Depends: openssh-sftp-server but it is not going to be installed
+                  Recommends: ncurses-term but it is not going to be installed
+                  Recommends: ssh-import-id but it is not going to be installed
+E: Unable to correct problems, you have held broken packages.
+
++ sudo apt -s install openssh-client openssh-sftp-server openssh-server
+
+WARNING: apt does not have a stable CLI interface. Use with caution in scripts.
+
+Reading package lists...
+Building dependency tree...
+Reading state information...
+openssh-client is already the newest version (1:9.6p1-3ubuntu13.14).
+openssh-client set to manually installed.
+Some packages could not be installed. This may mean that you have
+requested an impossible situation or if you are using the unstable
+distribution that some required packages have not yet been created
+or been moved out of Incoming.
+The following information may help to resolve the situation:
+
+The following packages have unmet dependencies:
+ openssh-server : Depends: openssh-client (= 1:9.6p1-3ubuntu13.11) but 1:9.6p1-3ubuntu13.14 is to be installed
+                  Recommends: ncurses-term but it is not going to be installed
+                  Recommends: ssh-import-id but it is not going to be installed
+ openssh-sftp-server : Depends: openssh-client (= 1:9.6p1-3ubuntu13.11) but 1:9.6p1-3ubuntu13.14 is to be installed
+E: Unable to correct problems, you have held broken packages.
+
+============================================================
+UPDATE OUTPUT
+============================================================
+
++ sudo apt update
+
+WARNING: apt does not have a stable CLI interface. Use with caution in scripts.
+
+Hit:1 http://ports.ubuntu.com/ubuntu-ports noble InRelease
+Hit:2 http://ports.ubuntu.com/ubuntu-ports noble-security InRelease
+Reading package lists...
+Building dependency tree...
+Reading state information...
+All packages are up to date.
+
+============================================================
+POST-UPDATE POLICY
+============================================================
+
++ apt policy openssh-server openssh-client openssh-sftp-server screen
+
+WARNING: apt does not have a stable CLI interface. Use with caution in scripts.
+
+openssh-server:
+  Installed: (none)
+  Candidate: 1:9.6p1-3ubuntu13.11
+  Version table:
+     1:9.6p1-3ubuntu13.11 500
+        500 http://ports.ubuntu.com/ubuntu-ports noble-security/main arm64 Packages
+     1:9.6p1-3ubuntu13 500
+        500 http://ports.ubuntu.com/ubuntu-ports noble/main arm64 Packages
+openssh-client:
+  Installed: 1:9.6p1-3ubuntu13.14
+  Candidate: 1:9.6p1-3ubuntu13.14
+  Version table:
+ *** 1:9.6p1-3ubuntu13.14 100
+        100 /var/lib/dpkg/status
+     1:9.6p1-3ubuntu13.11 500
+        500 http://ports.ubuntu.com/ubuntu-ports noble-security/main arm64 Packages
+     1:9.6p1-3ubuntu13 500
+        500 http://ports.ubuntu.com/ubuntu-ports noble/main arm64 Packages
+openssh-sftp-server:
+  Installed: (none)
+  Candidate: 1:9.6p1-3ubuntu13.11
+  Version table:
+     1:9.6p1-3ubuntu13.11 500
+        500 http://ports.ubuntu.com/ubuntu-ports noble-security/main arm64 Packages
+     1:9.6p1-3ubuntu13 500
+        500 http://ports.ubuntu.com/ubuntu-ports noble/main arm64 Packages
+screen:
+  Installed: (none)
+  Candidate: 4.9.1-1ubuntu1
+  Version table:
+     4.9.1-1ubuntu1 500
+        500 http://ports.ubuntu.com/ubuntu-ports noble-security/main arm64 Packages
+        100 /var/lib/dpkg/status
+     4.9.1-1build1 500
+        500 http://ports.ubuntu.com/ubuntu-ports noble/main arm64 Packages
+
+============================================================
+DPKG CONFIGURE OUTPUT
+============================================================
+
++ sudo dpkg --configure -a
+
+============================================================
+RECENT APT / DPKG LOGS
+============================================================
+
++ tail -n 200 /var/log/dpkg.log
+2026-03-10 16:43:02 status half-configured cmake-data:all 3.28.3-1build7
+2026-03-10 16:43:02 status installed cmake-data:all 3.28.3-1build7
+2026-03-10 16:43:02 configure libevent-core-2.1-7t64:arm64 2.1.12-stable-9ubuntu2 <none>
+2026-03-10 16:43:02 status unpacked libevent-core-2.1-7t64:arm64 2.1.12-stable-9ubuntu2
+2026-03-10 16:43:02 status half-configured libevent-core-2.1-7t64:arm64 2.1.12-stable-9ubuntu2
+2026-03-10 16:43:02 status installed libevent-core-2.1-7t64:arm64 2.1.12-stable-9ubuntu2
+2026-03-10 16:43:02 configure curl:arm64 8.5.0-2ubuntu10.7 <none>
+2026-03-10 16:43:02 status unpacked curl:arm64 8.5.0-2ubuntu10.7
+2026-03-10 16:43:02 status half-configured curl:arm64 8.5.0-2ubuntu10.7
+2026-03-10 16:43:02 status installed curl:arm64 8.5.0-2ubuntu10.7
+2026-03-10 16:43:02 configure libtsan2:arm64 14.2.0-4ubuntu2~24.04.1 <none>
+2026-03-10 16:43:02 status unpacked libtsan2:arm64 14.2.0-4ubuntu2~24.04.1
+2026-03-10 16:43:02 status half-configured libtsan2:arm64 14.2.0-4ubuntu2~24.04.1
+2026-03-10 16:43:02 status installed libtsan2:arm64 14.2.0-4ubuntu2~24.04.1
+2026-03-10 16:43:02 configure vim-runtime:all 2:9.1.0016-1ubuntu7.9 <none>
+2026-03-10 16:43:02 status unpacked vim-runtime:all 2:9.1.0016-1ubuntu7.9
+2026-03-10 16:43:02 status half-configured vim-runtime:all 2:9.1.0016-1ubuntu7.9
+2026-03-10 16:43:02 status installed vim-runtime:all 2:9.1.0016-1ubuntu7.9
+2026-03-10 16:43:02 configure libc-dev-bin:arm64 2.39-0ubuntu8.7 <none>
+2026-03-10 16:43:02 status unpacked libc-dev-bin:arm64 2.39-0ubuntu8.7
+2026-03-10 16:43:02 status half-configured libc-dev-bin:arm64 2.39-0ubuntu8.7
+2026-03-10 16:43:02 status installed libc-dev-bin:arm64 2.39-0ubuntu8.7
+2026-03-10 16:43:02 configure tmux:arm64 3.4-1build1 <none>
+2026-03-10 16:43:02 status unpacked tmux:arm64 3.4-1build1
+2026-03-10 16:43:02 status half-configured tmux:arm64 3.4-1build1
+2026-03-10 16:43:02 status installed tmux:arm64 3.4-1build1
+2026-03-10 16:43:02 configure libcc1-0:arm64 14.2.0-4ubuntu2~24.04.1 <none>
+2026-03-10 16:43:02 status unpacked libcc1-0:arm64 14.2.0-4ubuntu2~24.04.1
+2026-03-10 16:43:02 status half-configured libcc1-0:arm64 14.2.0-4ubuntu2~24.04.1
+2026-03-10 16:43:02 status installed libcc1-0:arm64 14.2.0-4ubuntu2~24.04.1
+2026-03-10 16:43:02 configure liblsan0:arm64 14.2.0-4ubuntu2~24.04.1 <none>
+2026-03-10 16:43:02 status unpacked liblsan0:arm64 14.2.0-4ubuntu2~24.04.1
+2026-03-10 16:43:02 status half-configured liblsan0:arm64 14.2.0-4ubuntu2~24.04.1
+2026-03-10 16:43:02 status installed liblsan0:arm64 14.2.0-4ubuntu2~24.04.1
+2026-03-10 16:43:02 configure libitm1:arm64 14.2.0-4ubuntu2~24.04.1 <none>
+2026-03-10 16:43:02 status unpacked libitm1:arm64 14.2.0-4ubuntu2~24.04.1
+2026-03-10 16:43:02 status half-configured libitm1:arm64 14.2.0-4ubuntu2~24.04.1
+2026-03-10 16:43:02 status installed libitm1:arm64 14.2.0-4ubuntu2~24.04.1
+2026-03-10 16:43:02 configure vim:arm64 2:9.1.0016-1ubuntu7.9 <none>
+2026-03-10 16:43:02 status unpacked vim:arm64 2:9.1.0016-1ubuntu7.9
+2026-03-10 16:43:02 status half-configured vim:arm64 2:9.1.0016-1ubuntu7.9
+2026-03-10 16:43:02 status installed vim:arm64 2:9.1.0016-1ubuntu7.9
+2026-03-10 16:43:02 configure screen:arm64 4.9.1-1ubuntu1 <none>
+2026-03-10 16:43:02 status unpacked screen:arm64 4.9.1-1ubuntu1
+2026-03-10 16:43:03 status half-configured screen:arm64 4.9.1-1ubuntu1
+2026-03-10 16:43:03 configure dpkg-dev:all 1.22.6ubuntu6.5 <none>
+2026-03-10 16:43:03 status unpacked dpkg-dev:all 1.22.6ubuntu6.5
+2026-03-10 16:43:03 status half-configured dpkg-dev:all 1.22.6ubuntu6.5
+2026-03-10 16:43:03 status installed dpkg-dev:all 1.22.6ubuntu6.5
+2026-03-10 16:43:03 configure pkgconf:arm64 1.8.1-2build1 <none>
+2026-03-10 16:43:03 status unpacked pkgconf:arm64 1.8.1-2build1
+2026-03-10 16:43:03 status half-configured pkgconf:arm64 1.8.1-2build1
+2026-03-10 16:43:03 status installed pkgconf:arm64 1.8.1-2build1
+2026-03-10 16:43:03 configure pkg-config:arm64 1.8.1-2build1 <none>
+2026-03-10 16:43:03 status unpacked pkg-config:arm64 1.8.1-2build1
+2026-03-10 16:43:03 status half-configured pkg-config:arm64 1.8.1-2build1
+2026-03-10 16:43:03 status installed pkg-config:arm64 1.8.1-2build1
+2026-03-10 16:43:03 configure libgcc-13-dev:arm64 13.3.0-6ubuntu2~24.04.1 <none>
+2026-03-10 16:43:03 status unpacked libgcc-13-dev:arm64 13.3.0-6ubuntu2~24.04.1
+2026-03-10 16:43:03 status half-configured libgcc-13-dev:arm64 13.3.0-6ubuntu2~24.04.1
+2026-03-10 16:43:03 status installed libgcc-13-dev:arm64 13.3.0-6ubuntu2~24.04.1
+2026-03-10 16:43:03 configure cmake:arm64 3.28.3-1build7 <none>
+2026-03-10 16:43:03 status unpacked cmake:arm64 3.28.3-1build7
+2026-03-10 16:43:03 status half-configured cmake:arm64 3.28.3-1build7
+2026-03-10 16:43:03 status installed cmake:arm64 3.28.3-1build7
+2026-03-10 16:43:03 configure libc6-dev:arm64 2.39-0ubuntu8.7 <none>
+2026-03-10 16:43:03 status unpacked libc6-dev:arm64 2.39-0ubuntu8.7
+2026-03-10 16:43:03 status half-configured libc6-dev:arm64 2.39-0ubuntu8.7
+2026-03-10 16:43:03 status installed libc6-dev:arm64 2.39-0ubuntu8.7
+2026-03-10 16:43:03 configure libstdc++-13-dev:arm64 13.3.0-6ubuntu2~24.04.1 <none>
+2026-03-10 16:43:03 status unpacked libstdc++-13-dev:arm64 13.3.0-6ubuntu2~24.04.1
+2026-03-10 16:43:03 status half-configured libstdc++-13-dev:arm64 13.3.0-6ubuntu2~24.04.1
+2026-03-10 16:43:03 status installed libstdc++-13-dev:arm64 13.3.0-6ubuntu2~24.04.1
+2026-03-10 16:43:03 configure gcc-13-aarch64-linux-gnu:arm64 13.3.0-6ubuntu2~24.04.1 <none>
+2026-03-10 16:43:03 status unpacked gcc-13-aarch64-linux-gnu:arm64 13.3.0-6ubuntu2~24.04.1
+2026-03-10 16:43:03 status half-configured gcc-13-aarch64-linux-gnu:arm64 13.3.0-6ubuntu2~24.04.1
+2026-03-10 16:43:03 status installed gcc-13-aarch64-linux-gnu:arm64 13.3.0-6ubuntu2~24.04.1
+2026-03-10 16:43:03 configure gcc-13:arm64 13.3.0-6ubuntu2~24.04.1 <none>
+2026-03-10 16:43:03 status unpacked gcc-13:arm64 13.3.0-6ubuntu2~24.04.1
+2026-03-10 16:43:03 status half-configured gcc-13:arm64 13.3.0-6ubuntu2~24.04.1
+2026-03-10 16:43:03 status installed gcc-13:arm64 13.3.0-6ubuntu2~24.04.1
+2026-03-10 16:43:03 configure g++-13-aarch64-linux-gnu:arm64 13.3.0-6ubuntu2~24.04.1 <none>
+2026-03-10 16:43:03 status unpacked g++-13-aarch64-linux-gnu:arm64 13.3.0-6ubuntu2~24.04.1
+2026-03-10 16:43:03 status half-configured g++-13-aarch64-linux-gnu:arm64 13.3.0-6ubuntu2~24.04.1
+2026-03-10 16:43:03 status installed g++-13-aarch64-linux-gnu:arm64 13.3.0-6ubuntu2~24.04.1
+2026-03-10 16:43:03 configure gcc-aarch64-linux-gnu:arm64 4:13.2.0-7ubuntu1 <none>
+2026-03-10 16:43:03 status unpacked gcc-aarch64-linux-gnu:arm64 4:13.2.0-7ubuntu1
+2026-03-10 16:43:03 status half-configured gcc-aarch64-linux-gnu:arm64 4:13.2.0-7ubuntu1
+2026-03-10 16:43:03 status installed gcc-aarch64-linux-gnu:arm64 4:13.2.0-7ubuntu1
+2026-03-10 16:43:03 configure g++-13:arm64 13.3.0-6ubuntu2~24.04.1 <none>
+2026-03-10 16:43:03 status unpacked g++-13:arm64 13.3.0-6ubuntu2~24.04.1
+2026-03-10 16:43:03 status half-configured g++-13:arm64 13.3.0-6ubuntu2~24.04.1
+2026-03-10 16:43:03 status installed g++-13:arm64 13.3.0-6ubuntu2~24.04.1
+2026-03-10 16:43:03 configure gcc:arm64 4:13.2.0-7ubuntu1 <none>
+2026-03-10 16:43:03 status unpacked gcc:arm64 4:13.2.0-7ubuntu1
+2026-03-10 16:43:03 status half-configured gcc:arm64 4:13.2.0-7ubuntu1
+2026-03-10 16:43:03 status installed gcc:arm64 4:13.2.0-7ubuntu1
+2026-03-10 16:43:03 configure g++-aarch64-linux-gnu:arm64 4:13.2.0-7ubuntu1 <none>
+2026-03-10 16:43:03 status unpacked g++-aarch64-linux-gnu:arm64 4:13.2.0-7ubuntu1
+2026-03-10 16:43:03 status half-configured g++-aarch64-linux-gnu:arm64 4:13.2.0-7ubuntu1
+2026-03-10 16:43:03 status installed g++-aarch64-linux-gnu:arm64 4:13.2.0-7ubuntu1
+2026-03-10 16:43:03 configure g++:arm64 4:13.2.0-7ubuntu1 <none>
+2026-03-10 16:43:03 status unpacked g++:arm64 4:13.2.0-7ubuntu1
+2026-03-10 16:43:04 status half-configured g++:arm64 4:13.2.0-7ubuntu1
+2026-03-10 16:43:04 status installed g++:arm64 4:13.2.0-7ubuntu1
+2026-03-10 16:43:04 configure build-essential:arm64 12.10ubuntu1 <none>
+2026-03-10 16:43:04 status unpacked build-essential:arm64 12.10ubuntu1
+2026-03-10 16:43:04 status half-configured build-essential:arm64 12.10ubuntu1
+2026-03-10 16:43:04 status installed build-essential:arm64 12.10ubuntu1
+2026-03-10 16:43:04 trigproc install-info:arm64 7.1-3build2 <none>
+2026-03-10 16:43:04 status half-configured install-info:arm64 7.1-3build2
+2026-03-10 16:43:04 status installed install-info:arm64 7.1-3build2
+2026-03-10 16:43:04 trigproc desktop-file-utils:arm64 0.27-2build1 <none>
+2026-03-10 16:43:04 status half-configured desktop-file-utils:arm64 0.27-2build1
+2026-03-10 16:43:04 status installed desktop-file-utils:arm64 0.27-2build1
+2026-03-10 16:43:04 trigproc hicolor-icon-theme:all 0.17-2 <none>
+2026-03-10 16:43:04 status half-configured hicolor-icon-theme:all 0.17-2
+2026-03-10 16:43:04 status installed hicolor-icon-theme:all 0.17-2
+2026-03-10 16:43:04 trigproc gnome-menus:arm64 3.36.0-1.1ubuntu3 <none>
+2026-03-10 16:43:04 status half-configured gnome-menus:arm64 3.36.0-1.1ubuntu3
+2026-03-10 16:43:04 status installed gnome-menus:arm64 3.36.0-1.1ubuntu3
+2026-03-10 16:43:04 trigproc libc-bin:arm64 2.39-0ubuntu8.7 <none>
+2026-03-10 16:43:04 status half-configured libc-bin:arm64 2.39-0ubuntu8.7
+2026-03-10 16:43:05 status installed libc-bin:arm64 2.39-0ubuntu8.7
+2026-03-10 16:43:05 trigproc man-db:arm64 2.12.0-4build2 <none>
+2026-03-10 16:43:05 status half-configured man-db:arm64 2.12.0-4build2
+2026-03-10 16:43:08 status installed man-db:arm64 2.12.0-4build2
+2026-03-10 16:43:08 trigproc debianutils:arm64 5.17build1 <none>
+2026-03-10 16:43:08 status half-configured debianutils:arm64 5.17build1
+2026-03-10 16:43:09 status installed debianutils:arm64 5.17build1
+2026-03-10 16:48:39 startup packages configure
+2026-03-10 16:48:39 configure screen:arm64 4.9.1-1ubuntu1 <none>
+2026-03-10 16:48:39 status half-configured screen:arm64 4.9.1-1ubuntu1
+2026-03-10 16:49:25 startup packages configure
+2026-03-10 16:49:25 configure screen:arm64 4.9.1-1ubuntu1 <none>
+2026-03-10 16:49:25 status half-configured screen:arm64 4.9.1-1ubuntu1
+2026-03-10 16:54:32 startup packages configure
+2026-03-10 16:54:32 configure screen:arm64 4.9.1-1ubuntu1 <none>
+2026-03-10 16:54:32 status half-configured screen:arm64 4.9.1-1ubuntu1
+2026-03-10 16:55:18 startup packages configure
+2026-03-10 16:55:18 configure screen:arm64 4.9.1-1ubuntu1 <none>
+2026-03-10 16:55:18 status half-configured screen:arm64 4.9.1-1ubuntu1
+2026-03-10 17:09:51 startup packages configure
+2026-03-10 17:09:51 configure screen:arm64 4.9.1-1ubuntu1 <none>
+2026-03-10 17:09:51 status half-configured screen:arm64 4.9.1-1ubuntu1
+2026-03-10 17:10:36 startup packages configure
+2026-03-10 17:10:36 configure screen:arm64 4.9.1-1ubuntu1 <none>
+2026-03-10 17:10:36 status half-configured screen:arm64 4.9.1-1ubuntu1
+2026-03-10 21:14:10 startup archives unpack
+2026-03-10 21:14:10 install xclip:arm64 <none> 0.13-3
+2026-03-10 21:14:10 status half-installed xclip:arm64 0.13-3
+2026-03-10 21:14:10 status triggers-pending man-db:arm64 2.12.0-4build2
+2026-03-10 21:14:11 status unpacked xclip:arm64 0.13-3
+2026-03-10 21:14:11 startup packages configure
+2026-03-10 21:14:11 configure screen:arm64 4.9.1-1ubuntu1 <none>
+2026-03-10 21:14:11 status half-configured screen:arm64 4.9.1-1ubuntu1
+2026-03-10 21:14:11 configure xclip:arm64 0.13-3 <none>
+2026-03-10 21:14:11 status unpacked xclip:arm64 0.13-3
+2026-03-10 21:14:11 status half-configured xclip:arm64 0.13-3
+2026-03-10 21:14:11 status installed xclip:arm64 0.13-3
+2026-03-10 21:14:11 trigproc man-db:arm64 2.12.0-4build2 <none>
+2026-03-10 21:14:11 status half-configured man-db:arm64 2.12.0-4build2
+2026-03-10 21:14:13 status installed man-db:arm64 2.12.0-4build2
+2026-03-10 21:42:00 startup packages configure
+2026-03-10 21:42:00 configure screen:arm64 4.9.1-1ubuntu1 <none>
+2026-03-10 21:42:00 status half-configured screen:arm64 4.9.1-1ubuntu1
+2026-03-10 21:42:47 startup packages configure
+2026-03-10 21:42:47 configure screen:arm64 4.9.1-1ubuntu1 <none>
+2026-03-10 21:42:47 status half-configured screen:arm64 4.9.1-1ubuntu1
+2026-03-10 21:42:57 startup packages configure
+2026-03-10 21:42:57 configure screen:arm64 4.9.1-1ubuntu1 <none>
+2026-03-10 21:42:57 status half-configured screen:arm64 4.9.1-1ubuntu1
+2026-03-10 21:51:03 startup packages configure
+2026-03-10 21:51:03 configure screen:arm64 4.9.1-1ubuntu1 <none>
+2026-03-10 21:51:03 status half-configured screen:arm64 4.9.1-1ubuntu1
+2026-03-10 21:53:31 startup packages configure
+2026-03-10 21:53:31 configure screen:arm64 4.9.1-1ubuntu1 <none>
+2026-03-10 21:53:31 status half-configured screen:arm64 4.9.1-1ubuntu1
+2026-03-10 21:55:22 startup packages configure
+2026-03-10 21:55:22 configure screen:arm64 4.9.1-1ubuntu1 <none>
+2026-03-10 21:55:22 status half-configured screen:arm64 4.9.1-1ubuntu1
+2026-03-10 21:57:11 startup packages remove
+2026-03-10 21:57:11 status half-configured screen:arm64 4.9.1-1ubuntu1
+2026-03-10 21:57:12 remove screen:arm64 4.9.1-1ubuntu1 <none>
+2026-03-10 21:57:12 status half-installed screen:arm64 4.9.1-1ubuntu1
+2026-03-10 21:57:12 status triggers-pending man-db:arm64 2.12.0-4build2
+2026-03-10 21:57:12 status triggers-pending install-info:arm64 7.1-3build2
+2026-03-10 21:57:12 status triggers-pending debianutils:arm64 5.17build1
+2026-03-10 21:57:12 status config-files screen:arm64 4.9.1-1ubuntu1
+2026-03-10 21:57:13 trigproc man-db:arm64 2.12.0-4build2 <none>
+2026-03-10 21:57:13 status half-configured man-db:arm64 2.12.0-4build2
+2026-03-10 21:57:15 status installed man-db:arm64 2.12.0-4build2
+2026-03-10 21:57:15 trigproc install-info:arm64 7.1-3build2 <none>
+2026-03-10 21:57:15 status half-configured install-info:arm64 7.1-3build2
+2026-03-10 21:57:16 status installed install-info:arm64 7.1-3build2
+2026-03-10 21:57:16 trigproc debianutils:arm64 5.17build1 <none>
+2026-03-10 21:57:16 status half-configured debianutils:arm64 5.17build1
+2026-03-10 21:57:16 status installed debianutils:arm64 5.17build1
+2026-03-10 21:57:33 startup packages configure
+2026-03-10 22:04:23 startup packages configure
+
++ tail -n 200 /var/log/apt/history.log
+
+Start-Date: 2026-02-10  17:03:57
+Commandline: apt --assume-yes --quiet --option=Dpkg::options::=--force-unsafe-io --option=Dpkg::Options::=--force-confold upgrade
+Install: libdb5.3t64:arm64 (5.3.28+dfsg2-7, automatic)
+Upgrade: dpkg:arm64 (1.22.6ubuntu6, 1.22.6ubuntu6.5), libsmartcols1:arm64 (2.39.3-9ubuntu6, 2.39.3-9ubuntu6.4), libpam-runtime:arm64 (1.5.3-5ubuntu5, 1.5.3-5ubuntu5.5), coreutils:arm64 (9.4-3ubuntu6, 9.4-3ubuntu6.1), libaudit-common:arm64 (1:3.1.2-2.1build1, 1:3.1.2-2.1build1.1), apt:arm64 (2.7.14build2, 2.8.3), libacl1:arm64 (2.3.2-1build1, 2.3.2-1build1.1), libunistring5:arm64 (1.1-2build1, 1.1-2build1.1), libidn2-0:arm64 (2.3.7-2build1, 2.3.7-2build1.1), libtasn1-6:arm64 (4.19.0-3build1, 4.19.0-3ubuntu0.24.04.2), libselinux1:arm64 (3.5-2ubuntu2, 3.5-2ubuntu2.1), liblzma5:arm64 (5.6.1+really5.4.5-1, 5.6.1+really5.4.5-1ubuntu0.2), libhogweed6t64:arm64 (3.9.1-2.2build1, 3.9.1-2.2build1.1), libext2fs2t64:arm64 (1.47.0-2.4~exp1ubuntu4, 1.47.0-2.4~exp1ubuntu4.1), libp11-kit0:arm64 (0.25.3-4ubuntu2, 0.25.3-4ubuntu2.1), libproc2-0:arm64 (2:4.0.4-4ubuntu3, 2:4.0.4-4ubuntu3.2), libsystemd0:arm64 (255.4-1ubuntu8, 255.4-1ubuntu8.12), libmount1:arm64 (2.39.3-9ubuntu6, 2.39.3-9ubuntu6.4), libzstd1:arm64 (1.5.5+dfsg2-2build1, 1.5.5+dfsg2-2build1.1), util-linux:arm64 (2.39.3-9ubuntu6, 2.39.3-9ubuntu6.4), libudev1:arm64 (255.4-1ubuntu8, 255.4-1ubuntu8.12), libgpg-error0:arm64 (1.47-3build2, 1.47-3build2.1), libnettle8t64:arm64 (3.9.1-2.2build1, 3.9.1-2.2build1.1), libcom-err2:arm64 (1.47.0-2.4~exp1ubuntu4, 1.47.0-2.4~exp1ubuntu4.1), libcap2:arm64 (1:2.66-5ubuntu2, 1:2.66-5ubuntu2.2), libc6:arm64 (2.39-0ubuntu8, 2.39-0ubuntu8.7), libpam-modules:arm64 (1.5.3-5ubuntu5, 1.5.3-5ubuntu5.5), libuuid1:arm64 (2.39.3-9ubuntu6, 2.39.3-9ubuntu6.4), gpgv:arm64 (2.4.4-2ubuntu17, 2.4.4-2ubuntu17.4), base-files:arm64 (13ubuntu10, 13ubuntu10.4), gzip:arm64 (1.12-1ubuntu3, 1.12-1ubuntu3.1), login:arm64 (1:4.13+dfsg1-4ubuntu3, 1:4.13+dfsg1-4ubuntu3.2), libgmp10:arm64 (2:6.3.0+dfsg-2ubuntu6, 2:6.3.0+dfsg-2ubuntu6.1), libpcre2-8-0:arm64 (10.42-4ubuntu2, 10.42-4ubuntu2.1), libpam-modules-bin:arm64 (1.5.3-5ubuntu5, 1.5.3-5ubuntu5.5), libseccomp2:arm64 (2.5.5-1ubuntu3, 2.5.5-1ubuntu3.1), procps:arm64 (2:4.0.4-4ubuntu3, 2:4.0.4-4ubuntu3.2), libapt-pkg6.0t64:arm64 (2.7.14build2, 2.8.3), mount:arm64 (2.39.3-9ubuntu6, 2.39.3-9ubuntu6.4), perl-base:arm64 (5.38.2-3.2build2, 5.38.2-3.2ubuntu0.2), libpam0g:arm64 (1.5.3-5ubuntu5, 1.5.3-5ubuntu5.5), libc-bin:arm64 (2.39-0ubuntu8, 2.39-0ubuntu8.7), libattr1:arm64 (1:2.5.2-1build1, 1:2.5.2-1build1.1), libaudit1:arm64 (1:3.1.2-2.1build1, 1:3.1.2-2.1build1.1), libssl3t64:arm64 (3.0.13-0ubuntu3, 3.0.13-0ubuntu3.7), libgnutls30t64:arm64 (3.8.3-1.1ubuntu3, 3.8.3-1.1ubuntu3.4), libblkid1:arm64 (2.39.3-9ubuntu6, 2.39.3-9ubuntu6.4), logsave:arm64 (1.47.0-2.4~exp1ubuntu4, 1.47.0-2.4~exp1ubuntu4.1), liblz4-1:arm64 (1.9.4-1build1, 1.9.4-1build1.1), libbz2-1.0:arm64 (1.0.8-5.1, 1.0.8-5.1build0.1), zlib1g:arm64 (1:1.3.dfsg-3.1ubuntu2, 1:1.3.dfsg-3.1ubuntu2.1), libmd0:arm64 (1.1.0-2build1, 1.1.0-2build1.1), bsdutils:arm64 (1:2.39.3-9ubuntu6, 1:2.39.3-9ubuntu6.4), libss2:arm64 (1.47.0-2.4~exp1ubuntu4, 1.47.0-2.4~exp1ubuntu4.1), libstdc++6:arm64 (14-20240412-0ubuntu1, 14.2.0-4ubuntu2~24.04), e2fsprogs:arm64 (1.47.0-2.4~exp1ubuntu4, 1.47.0-2.4~exp1ubuntu4.1), passwd:arm64 (1:4.13+dfsg1-4ubuntu3, 1:4.13+dfsg1-4ubuntu3.2), gcc-14-base:arm64 (14-20240412-0ubuntu1, 14.2.0-4ubuntu2~24.04), libgcc-s1:arm64 (14-20240412-0ubuntu1, 14.2.0-4ubuntu2~24.04)
+End-Date: 2026-02-10  17:04:07
+
+Start-Date: 2026-02-10  17:04:51
+Commandline: apt --assume-yes --quiet --option=Dpkg::options::=--force-unsafe-io --option=Dpkg::Options::=--force-confold install ubuntu-desktop dmz-cursor-theme gdm3 gnome-control-center gnome-menus gnome-session-canberra gnome-settings-daemon gnome-shell gnome-shell-extension-appindicator gnome-shell-extension-desktop-icons-ng gnome-shell-extension-ubuntu-dock gnome-shell-extension-ubuntu-tiling-assistant gstreamer1.0-alsa gstreamer1.0-packagekit gstreamer1.0-plugins-base-apps language-selector-gnome libatk-adaptor libnotify-bin nautilus pipewire-pulse software-properties-gtk ubuntu-desktop-minimal ubuntu-release-upgrader-gtk ubuntu-session ubuntu-settings update-manager update-notifier wireplumber xdg-user-dirs-gtk zenity cloud-initramfs-growroot pemmican-desktop ubuntu-desktop-raspi ubuntu-raspi-settings-desktop flash-kernel libraspberrypi-bin rpi-eeprom ubuntu-raspi-settings wpasupplicant adduser apt apt-utils console-setup debconf-i18n dhcpcd-base eject init iproute2 iputils-ping kbd kmod less locales lsb-release netbase netcat-openbsd netplan.io python3 sudo tzdata ubuntu-keyring ubuntu-minimal ubuntu-pro-client udev vim-tiny whiptail bind9-dnsutils busybox-static cpio cron dmidecode dosfstools ed file ftp hdparm info lshw lsof man-db nftables parted pciutils psmisc rsync strace time ubuntu-standard usbutils wget xz-utils linux-firmware-raspi oem-config-gtk oem-config ubiquity-frontend-gtk language-pack-en-base oem-config-slideshow-ubuntu ubiquity-slideshow-ubuntu linux-image-raspi
+Install: kerneloops:arm64 (0.12+git20140509-6ubuntu8, automatic), openvpn:arm64 (2.6.14-0ubuntu0.24.04.3, automatic), libparted2t64:arm64 (3.6-4build1, automatic), fontconfig:arm64 (2.15.0-1.1ubuntu2, automatic), libvulkan1:arm64 (1.3.275.0-1build1, automatic), telnet:arm64 (0.17+2.5-3ubuntu4.1, automatic), libnetfilter-conntrack3:arm64 (1.0.9-6build1, automatic), gkbd-capplet:arm64 (3.28.1-1build3, automatic), lsb-release:arm64 (12.0-2), libsynctex2:arm64 (2023.20230311.66589-9build3, automatic), tcpdump:arm64 (4.99.4-3ubuntu4.24.04.1, automatic), gnome-text-editor:arm64 (46.3-0ubuntu2, automatic), tracker:arm64 (3.7.1-1build1, automatic), xserver-xorg-video-nouveau:arm64 (1:1.0.17-2ubuntu0.1, automatic), geocode-glib-common:arm64 (3.26.3-6build3, automatic), network-manager-openvpn-gnome:arm64 (1.10.2-4build2, automatic), dmidecode:arm64 (3.5-3ubuntu0.1), liborcus-parser-0.18-0:arm64 (0.19.2-3build3, automatic), gir1.2-adw-1:arm64 (1.5.0-1ubuntu2, automatic), libxcb-present0:arm64 (1.15-1ubuntu2, automatic), libwrap0:arm64 (7.6.q-33, automatic), libkeyutils1:arm64 (1.6.3-3build1, automatic), yaru-theme-icon:arm64 (24.04.2-0ubuntu1, automatic), python3-blinker:arm64 (1.7.0-1, automatic), orca:arm64 (46.1-1ubuntu1, automatic), libyajl2:arm64 (2.1.0-5build1, automatic), libxtables12:arm64 (1.8.10-3ubuntu2, automatic), libpolkit-agent-1-0:arm64 (124-2ubuntu1.24.04.2, automatic), libupower-glib3:arm64 (1.90.3-1, automatic), dmeventd:arm64 (2:1.02.185-3ubuntu3.2, automatic), u-boot-tools:arm64 (2025.10-0ubuntu0.24.04.1, automatic), libv4lconvert0t64:arm64 (1.26.1-4build3, automatic), libreoffice-calc:arm64 (4:24.2.7-0ubuntu0.24.04.4, automatic), tecla:arm64 (46.0-1ubuntu0.1, automatic), libgomp1:arm64 (14.2.0-4ubuntu2~24.04, automatic), oem-config-slideshow-ubuntu:arm64 (199), libtimedate-perl:arm64 (2.3300-2, automatic), libhtml-tagset-perl:arm64 (3.20-6, automatic), networkd-dispatcher:arm64 (2.2.4-1, automatic), libecal-2.0-3:arm64 (3.52.3-0ubuntu1.1, automatic), initramfs-tools-core:arm64 (0.142ubuntu25.8, automatic), libpulse0:arm64 (1:16.1+dfsg1-2ubuntu10.1, automatic), libwebpmux3:arm64 (1.3.2-0.4build3, automatic), libpcaudio0:arm64 (1.2-2build3, automatic), libsasl2-modules-gssapi-mit:arm64 (2.1.28+dfsg1-5ubuntu3.1, automatic), speech-dispatcher-audio-plugins:arm64 (0.12.0~rc2-2build3, automatic), netplan-generator:arm64 (1.1.2-8ubuntu1~24.04.1, automatic), pinentry-gnome3:arm64 (1.2.1-3ubuntu5, automatic), pcmciautils:arm64 (018-14build1, automatic), cups-filters:arm64 (2.0.0-0ubuntu4.1, automatic), debconf-i18n:arm64 (1.5.86ubuntu1), console-setup:arm64 (1.226ubuntu1), printer-driver-m2300w:arm64 (0.51-15build2, automatic), libtss2-esys-3.0.2-0t64:arm64 (4.0.1-7.1ubuntu5.1, automatic), zstd:arm64 (1.5.5+dfsg2-2build1.1, automatic), udev:arm64 (255.4-1ubuntu8.12), systemd-oomd:arm64 (255.4-1ubuntu8.12, automatic), libvpx9:arm64 (1.14.0-1ubuntu2.2, automatic), libxxf86vm1:arm64 (1:1.1.4-1build4, automatic), libexttextcat-2.0-0:arm64 (3.4.7-1build1, automatic), evolution-data-server:arm64 (3.52.3-0ubuntu1.1, automatic), libpam-gnome-keyring:arm64 (46.1-2build1, automatic), libpangomm-2.48-1t64:arm64 (2.52.0-1build1, automatic), libsnapd-glib-2-1:arm64 (1.64-0ubuntu5, automatic), liblttng-ust1t64:arm64 (2.13.7-1.1ubuntu2, automatic), krb5-locales:arm64 (1.20.1-6ubuntu2.6, automatic), libsecret-1-0:arm64 (0.21.4-1build3, automatic), python3.12:arm64 (3.12.3-1ubuntu0.11, automatic), libltdl7:arm64 (2.4.7-7build1, automatic), python3-colorama:arm64 (0.4.6-4, automatic), libgsf-1-114:arm64 (1.14.51-2ubuntu0.1, automatic), libfdt1:arm64 (1.7.0-2build1, automatic), libpaper1:arm64 (1.1.29build1, automatic), libtie-ixhash-perl:arm64 (1.23-4, automatic), libreoffice-gnome:arm64 (4:24.2.7-0ubuntu0.24.04.4, automatic), libmm-glib0:arm64 (1.23.4-0ubuntu2, automatic), evince:arm64 (46.3.1-0ubuntu1, automatic), libxcb-util1:arm64 (0.4.0-1build3, automatic), python3-gi:arm64 (3.48.2-1, automatic), libsnmp-base:arm64 (5.9.4+dfsg-1.1ubuntu3.2, automatic), libqrtr-glib0:arm64 (1.2.2-1ubuntu4, automatic), uno-libs-private:arm64 (4:24.2.7-0ubuntu0.24.04.4, automatic), python3-tz:arm64 (2024.1-2, automatic), libreoffice-base-core:arm64 (4:24.2.7-0ubuntu0.24.04.4, automatic), hdparm:arm64 (9.65+ds-1build1), gir1.2-gmenu-3.0:arm64 (3.36.0-1.1ubuntu3, automatic), bind9-host:arm64 (1:9.18.39-0ubuntu0.24.04.2, automatic), libsharpyuv0:arm64 (1.3.2-0.4build3, automatic), pciutils:arm64 (1:3.10.0-2build1), gnome-user-docs:arm64 (46.0-1ubuntu1, automatic), alsa-base:arm64 (1.0.25+dfsg-0ubuntu7, automatic), libnftnl11:arm64 (1.2.6-2build1, automatic), libgssapi-krb5-2:arm64 (1.20.1-6ubuntu2.6, automatic), netbase:arm64 (6.4), spice-vdagent:arm64 (0.22.1-4build3, automatic), libwacom9:arm64 (2.10.0-2, automatic), libnma-gtk4-0:arm64 (1.10.6-3build2, automatic), dhcpcd-base:arm64 (1:10.0.6-1ubuntu3.2), readline-common:arm64 (8.2-4build1, automatic), libmtp-common:arm64 (1.1.21-3.1build1, automatic), libnet-ssleay-perl:arm64 (1.94-1build4, automatic), shotwell-common:arm64 (0.32.6-1ubuntu3, automatic), libnghttp2-14:arm64 (1.59.0-1ubuntu0.2, automatic), network-manager-openvpn:arm64 (1.10.2-4build2, automatic), libgupnp-dlna-2.0-4:arm64 (0.12.0-4build2, automatic), gnome-power-manager:arm64 (43.0-2build2, automatic), openssh-client:arm64 (1:9.6p1-3ubuntu13.14, automatic), libedataserverui4-1.0-0t64:arm64 (3.52.3-0ubuntu1.1, automatic), libxres1:arm64 (2:1.2.1-1build1, automatic), libunity-scopes-json-def-desktop:arm64 (7.1.4+19.04.20190319-6build4, automatic), iptables:arm64 (1.8.10-3ubuntu2, automatic), nautilus-extension-gnome-terminal:arm64 (3.52.0-1ubuntu2, automatic), libjbig2dec0:arm64 (0.20-1build3, automatic), libtss2-tcti-cmd0t64:arm64 (4.0.1-7.1ubuntu5.1, automatic), dosfstools:arm64 (4.2-1.1build1), libmbim-utils:arm64 (1.31.2-0ubuntu3.1, automatic), libgdk-pixbuf2.0-bin:arm64 (2.42.10+dfsg-3ubuntu3.2, automatic), iputils-ping:arm64 (3:20240117-1ubuntu0.1), libglx-mesa0:arm64 (25.2.8-0ubuntu0.24.04.1, automatic), libtwolame0:arm64 (0.4.0-2build3, automatic), libonig5:arm64 (6.9.9-1build1, automatic), pemmican-desktop:arm64 (1.0.3-0ubuntu1), libidn12:arm64 (1.42-1build1, automatic), python-babel-localedata:arm64 (2.10.3-3build1, automatic), libgdata-common:arm64 (0.18.1-6build2, automatic), python3-distupgrade:arm64 (1:24.04.28, automatic), libsigc++-3.0-0:arm64 (3.6.0-2, automatic), libgcr-base-3-1:arm64 (3.41.2-1build3, automatic), sane-utils:arm64 (1.2.1-7build4, automatic), libxklavier16:arm64 (5.4-5build2, automatic), ubuntu-desktop-raspi:arm64 (1.539.2), libgail18t64:arm64 (2.24.33-4ubuntu1.1, automatic), libauthen-sasl-perl:arm64 (2.1700-1, automatic), liblcms2-utils:arm64 (2.14-2build1, automatic), python3-brlapi:arm64 (6.6-4ubuntu5, automatic), libfreeaptx0:arm64 (0.1.1-2build1, automatic), libnl-3-200:arm64 (3.7.0-0.3build1.1, automatic), libgphoto2-l10n:arm64 (2.5.31-2.1build2, automatic), libdatrie1:arm64 (0.2.13-3build1, automatic), libthai0:arm64 (0.1.29-2build1, automatic), language-pack-en-base:arm64 (1:24.04+20260127), update-manager:arm64 (1:24.04.12), libctf-nobfd0:arm64 (2.42-4ubuntu2.8, automatic), gnome-font-viewer:arm64 (46.0-1build1, automatic), acl:arm64 (2.3.2-1build1.1, automatic), libnl-genl-3-200:arm64 (3.7.0-0.3build1.1, automatic), python3-dateutil:arm64 (2.8.2-3ubuntu1, automatic), apg:arm64 (2.2.3.dfsg.1-5build3, automatic), libssh-4:arm64 (0.10.6-2ubuntu0.2, automatic), bubblewrap:arm64 (0.9.0-1ubuntu0.1, automatic), libwacom-common:arm64 (2.10.0-2, automatic), linux-firmware-raspi:arm64 (12-0ubuntu1.1), libpcap0.8t64:arm64 (1.10.4-4.1ubuntu3, automatic), libreoffice-uiconfig-impress:arm64 (4:24.2.7-0ubuntu0.24.04.4, automatic), libreoffice-core:arm64 (4:24.2.7-0ubuntu0.24.04.4, automatic), packagekit-tools:arm64 (1.2.8-2ubuntu1.4, automatic), libio-socket-ssl-perl:arm64 (2.085-1, automatic), xkb-data:arm64 (2.41-2ubuntu1.1, automatic), libwww-robotrules-perl:arm64 (6.02-1, automatic), libxrender1:arm64 (1:0.9.10-1.1build1, automatic), webp-pixbuf-loader:arm64 (0.2.4-2build2, automatic), dbus-user-session:arm64 (1.14.10-4ubuntu4.1, automatic), libepubgen-0.1-1:arm64 (0.1.1-1ubuntu6, automatic), cpp:arm64 (4:13.2.0-7ubuntu1, automatic), libldap2:arm64 (2.6.10+dfsg-0ubuntu0.24.04.1, automatic), libnftables1:arm64 (1.0.9-1build1, automatic), gir1.2-json-1.0:arm64 (1.8.0-2build2, automatic), libqmi-proxy:arm64 (1.35.2-0ubuntu2, automatic), libhtml-form-perl:arm64 (6.11-1, automatic), liblwp-protocol-https-perl:arm64 (6.13-1, automatic), libglvnd0:arm64 (1.7.0-1build1, automatic), evolution-data-server-common:arm64 (3.52.3-0ubuntu1.1, automatic), libgnome-bluetooth-ui-3.0-13:arm64 (46.0-1ubuntu1, automatic), gnome-initial-setup:arm64 (46.3-1ubuntu3~24.04.2, automatic), mutter-common-bin:arm64 (46.2-1ubuntu0.24.04.14, automatic), libwww-perl:arm64 (6.76-1, automatic), libproxy1v5:arm64 (0.5.4-4build1, automatic), libblockdev-part3:arm64 (3.1.1-1ubuntu0.1, automatic), libgdbm-compat4t64:arm64 (1.23-5.1build1, automatic), libraptor2-0:arm64 (2.0.16-3ubuntu0.1, automatic), wpasupplicant:arm64 (2:2.10-21ubuntu0.3), eog:arm64 (45.3-1ubuntu2, automatic), libabw-0.1-1:arm64 (0.1.3-1build4, automatic), ssl-cert:arm64 (1.1.2ubuntu1, automatic), libtry-tiny-perl:arm64 (0.31-2, automatic), libdebuginfod1t64:arm64 (0.190-1.1ubuntu0.1, automatic), libsuitesparseconfig7:arm64 (1:7.6.1+dfsg-1build1, automatic), printer-driver-foo2zjs-common:arm64 (20200505dfsg0-2ubuntu6, automatic), libgtk-4-common:arm64 (4.14.5+ds-0ubuntu0.7, automatic), libsensors-config:arm64 (1:3.6.0-9build1, automatic), gir1.2-notify-0.7:arm64 (0.8.3-1build2, automatic), ftp:arm64 (20230507-2build3), libetonyek-0.1-1:arm64 (0.1.10-5build1, automatic), libtirpc3t64:arm64 (1.3.4+ds-1.1build1, automatic), libxmlsec1t64:arm64 (1.2.39-5build2, automatic), libfprint-2-2:arm64 (1:1.94.7+tod1-0ubuntu5~24.04.4, automatic), hicolor-icon-theme:arm64 (0.17-2, automatic), gcr:arm64 (3.41.2-1build3, automatic), gdb:arm64 (15.0.50.20240403-0ubuntu1, automatic), modemmanager:arm64 (1.23.4-0ubuntu2, automatic), cryptsetup-bin:arm64 (2:2.7.0-1ubuntu4.2, automatic), cups-bsd:arm64 (2.4.7-1.2ubuntu7.9, automatic), gjs:arm64 (1.80.2-1build2, automatic), gpg:arm64 (2.4.4-2ubuntu17.4, automatic), libgweather-4-common:arm64 (4.4.2-1build1, automatic), libieee1284-3t64:arm64 (0.2.11-14.1build1, automatic), ubiquity-casper:arm64 (1.498, automatic), gnome-control-center-faces:arm64 (1:46.7-0ubuntu0.24.04.3, automatic), libglib2.0-bin:arm64 (2.80.0-6ubuntu3.8, automatic), gir1.2-snapd-2:arm64 (1.64-0ubuntu5, automatic), systemd-timesyncd:arm64 (255.4-1ubuntu8.12, automatic), perl:arm64 (5.38.2-3.2ubuntu0.2, automatic), polkitd:arm64 (124-2ubuntu1.24.04.2, automatic), libgoa-1.0-common:arm64 (3.50.4-0ubuntu2, automatic), gstreamer1.0-packagekit:arm64 (1.2.8-2ubuntu1.4), rpi-eeprom:arm64 (26.3-0ubuntu0.24.04.2), libgjs0g:arm64 (1.80.2-1build2, automatic), libtirpc-common:arm64 (1.3.4+ds-1.1build1, automatic), libxcb-image0:arm64 (0.4.0-2build1, automatic), libtss2-sys1t64:arm64 (4.0.1-7.1ubuntu5.1, automatic), libcanberra-gtk3-module:arm64 (0.30-10ubuntu10, automatic), tzdata:arm64 (2025b-0ubuntu0.24.04.1), xserver-xorg-video-amdgpu:arm64 (23.0.0-1ubuntu0.24.04.1, automatic), libx11-xcb1:arm64 (2:1.8.7-1build1, automatic), xbrlapi:arm64 (6.6-4ubuntu5, automatic), libxshmfence1:arm64 (1.3-1build5, automatic), libblockdev-swap3:arm64 (3.1.1-1ubuntu0.1, automatic), libdjvulibre-text:arm64 (3.5.28-2ubuntu0.24.04.1, automatic), libunwind8:arm64 (1.6.2-3build1.1, automatic), librygel-core-2.8-0:arm64 (0.42.5-1ubuntu3, automatic), cups-common:arm64 (2.4.7-1.2ubuntu7.9, automatic), libdecor-0-0:arm64 (0.2.2-1build2, automatic), libldb2:arm64 (2:2.8.0+samba4.19.5+dfsg-4ubuntu9.4, automatic), ntfs-3g:arm64 (1:2022.10.3-1.2ubuntu3, automatic), libmagic-mgc:arm64 (1:5.45-3build1, automatic), libpango-1.0-0:arm64 (1.52.1+ds-1build1, automatic), python3-monotonic:arm64 (1.6-2, automatic), gamemode-daemon:arm64 (1.8.1-2build1, automatic), kbd:arm64 (2.6.4-2ubuntu2), pemmican-common:arm64 (1.0.3-0ubuntu1, automatic), libexiv2-27:arm64 (0.27.6-1build1, automatic), python3-cffi-backend:arm64 (1.16.0-2build1, automatic), libldap-common:arm64 (2.6.10+dfsg-0ubuntu0.24.04.1, automatic), libgusb2:arm64 (0.4.8-1build2, automatic), libwavpack1:arm64 (5.6.0-1build1, automatic), libatopology2t64:arm64 (1.2.11-1ubuntu0.1, automatic), network-manager-config-connectivity-ubuntu:arm64 (1.46.0-1ubuntu2.5, automatic), libebook-1.2-21t64:arm64 (3.52.3-0ubuntu1.1, automatic), apt-config-icons-hidpi:arm64 (1.0.2-1build6, automatic), gir1.2-gstreamer-1.0:arm64 (1.24.2-1ubuntu0.1, automatic), xserver-xorg-core:arm64 (2:21.1.12-1ubuntu1.5, automatic), gstreamer1.0-gl:arm64 (1.24.2-1ubuntu0.3, automatic), libgsound0t64:arm64 (1.0.3-3.2build2, automatic), libmtp9t64:arm64 (1.1.21-3.1build1, automatic), libgeocode-glib-2-0:arm64 (3.26.3-6build3, automatic), libpipewire-0.3-common:arm64 (1.0.5-1ubuntu3.2, automatic), libxcb-icccm4:arm64 (0.4.1-1.1build3, automatic), ibus-gtk3:arm64 (1.5.29-2, automatic), ibus-gtk4:arm64 (1.5.29-2, automatic), python3-minimal:arm64 (3.12.3-0ubuntu2.1, automatic), libmbim-glib4:arm64 (1.31.2-0ubuntu3.1, automatic), libxkbfile1:arm64 (1:1.1.0-1build4, automatic), gir1.2-freedesktop:arm64 (1.80.1-1, automatic), libe-book-0.1-1:arm64 (0.1.3-2build6, automatic), libayatana-appindicator3-1:arm64 (0.5.93-1build3, automatic), libgamemode0:arm64 (1.8.1-2build1, automatic), libgcr-4-4:arm64 (4.2.0-5, automatic), libpam-systemd:arm64 (255.4-1ubuntu8.12, automatic), sgml-base:arm64 (1.31, automatic), pipewire-pulse:arm64 (1.0.5-1ubuntu3.2), usb-modeswitch-data:arm64 (20191128-6, automatic), libubootenv-tool:arm64 (0.3.5-0.1build1, automatic), libpwquality-common:arm64 (1.4.5-3build1, automatic), libx11-protocol-perl:arm64 (0.56-9, automatic), libreoffice-uiconfig-math:arm64 (4:24.2.7-0ubuntu0.24.04.4, automatic), liblzo2-2:arm64 (2.10-2build4, automatic), libgnome-desktop-4-2t64:arm64 (44.0-5build2, automatic), libedata-book-1.2-27t64:arm64 (3.52.3-0ubuntu1.1, automatic), libwayland-cursor0:arm64 (1.22.0-2.1build1, automatic), libbrlapi0.8:arm64 (6.6-4ubuntu5, automatic), gnome-bluetooth-3-common:arm64 (46.0-1ubuntu1, automatic), ppp:arm64 (2.4.9-1+1.1ubuntu4, automatic), dctrl-tools:arm64 (2.24-3build3, automatic), device-tree-compiler:arm64 (1.7.0-2build1, automatic), printer-driver-splix:arm64 (2.0.0+svn315-7fakesync1ubuntu1, automatic), libreoffice-common:arm64 (4:24.2.7-0ubuntu0.24.04.4, automatic), libnl-route-3-200:arm64 (3.7.0-0.3build1.1, automatic), libreoffice-uiconfig-writer:arm64 (4:24.2.7-0ubuntu0.24.04.4, automatic), libiw30t64:arm64 (30~pre9-16.1ubuntu2, automatic), apport-gtk:arm64 (2.28.1-0ubuntu3.8, automatic), libuno-sal3t64:arm64 (4:24.2.7-0ubuntu0.24.04.4, automatic), libfile-mimeinfo-perl:arm64 (0.34-1, automatic), libpoppler-cpp0t64:arm64 (24.02.0-1ubuntu9.8, automatic), libpeas-common:arm64 (1.36.0-3build4, automatic), yelp-xsl:arm64 (42.1-2ubuntu0.24.04.1, automatic), libgtk3-perl:arm64 (0.038-3, automatic), libgpod4t64:arm64 (0.8.3-19.1ubuntu4, automatic), libxmlb2:arm64 (0.3.18-1, automatic), usb.ids:arm64 (2024.03.18-1, automatic), libdebuginfod-common:arm64 (0.190-1.1ubuntu0.1, automatic), libaom3:arm64 (3.8.2-2ubuntu0.1, automatic), libjpeg-turbo8:arm64 (2.1.5-2ubuntu2, automatic), ibus-table:arm64 (1.17.4-2, automatic), libbytesize1:arm64 (2.10-1ubuntu2, automatic), tcl:arm64 (8.6.14build1, automatic), pptp-linux:arm64 (1.10.0-1build4, automatic), libgspell-1-common:arm64 (1.12.2-1build4, automatic), libhttp-negotiate-perl:arm64 (6.01-2, automatic), libgtksourceview-5-common:arm64 (5.12.0-1build1, automatic), libgtk2.0-bin:arm64 (2.24.33-4ubuntu1.1, automatic), libv4l-0t64:arm64 (1.26.1-4build3, automatic), ucf:arm64 (3.0043+nmu1, automatic), ufw:arm64 (0.36.2-6, automatic), libavahi-common-data:arm64 (0.8-13ubuntu6.1, automatic), libheif1:arm64 (1.17.6-1ubuntu4.2, automatic), python3-lazr.restfulclient:arm64 (0.14.6-1, automatic), libcolord2:arm64 (1.4.7-1build2, automatic), ure:arm64 (4:24.2.7-0ubuntu0.24.04.4, automatic), libfont-afm-perl:arm64 (1.20-4, automatic), libcap2-bin:arm64 (1:2.66-5ubuntu2.2, automatic), whiptail:arm64 (0.52.24-2ubuntu2), gir1.2-glib-2.0:arm64 (2.80.0-6ubuntu3.8, automatic), libpsl5t64:arm64 (0.21.2-1.1build1, automatic), libcrack2:arm64 (2.9.6-5.1build2, automatic), libsasl2-modules:arm64 (2.1.28+dfsg1-5ubuntu3.1, automatic), libclucene-core1t64:arm64 (2.3.3.4+dfsg-1.2ubuntu2, automatic), gir1.2-nma-1.0:arm64 (1.10.6-3build2, automatic), libtimezonemap-data:arm64 (0.4.6-6ubuntu1, automatic), libsasl2-2:arm64 (2.1.28+dfsg1-5ubuntu3.1, automatic), libxcb-dri3-0:arm64 (1.15-1ubuntu2, automatic), geoclue-2.0:arm64 (2.7.0-3ubuntu7, automatic), libcairo2:arm64 (1.18.0-3build1, automatic), libgbm1:arm64 (25.2.8-0ubuntu0.24.04.1, automatic), libmalcontent-0-0:arm64 (0.11.1-1ubuntu1.3, automatic), libgexiv2-2:arm64 (0.14.2-2build3, automatic), libpciaccess0:arm64 (0.17-3ubuntu0.24.04.2, automatic), xxd:arm64 (2:9.1.0016-1ubuntu7.9, automatic), python3-ibus-1.0:arm64 (1.5.29-2, automatic), libgnome-desktop-3-20t64:arm64 (44.0-5build2, automatic), libxcursor1:arm64 (1:1.2.1-1build1, automatic), libcollection4t64:arm64 (0.6.2-2.1build1, automatic), libibverbs1:arm64 (50.0-2ubuntu0.2, automatic), libkpathsea6:arm64 (2023.20230311.66589-9build3, automatic), libheif-plugin-libde265:arm64 (1.17.6-1ubuntu4.2, automatic), libsnmp40t64:arm64 (5.9.4+dfsg-1.1ubuntu3.2, automatic), deja-dup:arm64 (45.2-1build2, automatic), libgdm1:arm64 (46.2-1ubuntu1~24.04.6, automatic), libvorbisfile3:arm64 (1.3.7-1build3, automatic), libexpat1:arm64 (2.6.1-2ubuntu0.3, automatic), libgtop-2.0-11:arm64 (2.41.3-1ubuntu0.24.04.1, automatic), gir1.2-gdkpixbuf-2.0:arm64 (2.42.10+dfsg-3ubuntu3.2, automatic), bluez-cups:arm64 (5.72-0ubuntu5.5, automatic), xdg-desktop-portal-gtk:arm64 (1.15.1-1build2, automatic), zip:arm64 (3.0-13ubuntu0.2, automatic), libbinutils:arm64 (2.42-4ubuntu2.8, automatic), python3-netplan:arm64 (1.1.2-8ubuntu1~24.04.1, automatic), libedataserverui-1.2-4t64:arm64 (3.52.3-0ubuntu1.1, automatic), ubuntu-raspi-settings:arm64 (24.04.4), libavahi-core7:arm64 (0.8-13ubuntu6.1, automatic), libijs-0.35:arm64 (0.35-15.1build1, automatic), libfwupd2:arm64 (1.9.33-0ubuntu1~24.04.1ubuntu1, automatic), ubiquity-slideshow-ubuntu:arm64 (199), ubuntu-drivers-common:arm64 (1:0.9.7.6ubuntu3.5, automatic), python3-ptyprocess:arm64 (0.7.0-5, automatic), heif-thumbnailer:arm64 (1.17.6-1ubuntu4.2, automatic), libcbor0.10:arm64 (0.10.2-1.2ubuntu2, automatic), libxmuu1:arm64 (2:1.1.3-3build2, automatic), ubuntu-release-upgrader-gtk:arm64 (1:24.04.28), remmina-plugin-rdp:arm64 (1.4.35+dfsg-0ubuntu5.1, automatic), libdv4t64:arm64 (1.0.0-17.1build1, automatic), initramfs-tools-bin:arm64 (0.142ubuntu25.8, automatic), libpython3.12-minimal:arm64 (3.12.3-1ubuntu0.11, automatic), apparmor:arm64 (4.0.1really4.0.1-0ubuntu0.24.04.5, automatic), xdg-desktop-portal-gnome:arm64 (46.2-0ubuntu1, automatic), at-spi2-core:arm64 (2.52.0-1build1, automatic), libtss2-tcti-libtpms0t64:arm64 (4.0.1-7.1ubuntu5.1, automatic), libdeflate0:arm64 (1.19-1build1.1, automatic), libgif7:arm64 (5.2.2-1ubuntu1, automatic), libjpeg8:arm64 (8c-2ubuntu11, automatic), patch:arm64 (2.7.6-7build3, automatic), libdee-1.0-4:arm64 (1.2.7+17.10.20170616-7build5, automatic), libfido2-1:arm64 (1.14.0-1build3, automatic), x11-common:arm64 (1:7.7+23ubuntu3, automatic), libiec61883-0:arm64 (1.2.0-6build1, automatic), kmod:arm64 (31+20240202-2ubuntu7.1), os-prober:arm64 (1.81ubuntu4, automatic), libgs10-common:arm64 (10.02.1~dfsg1-0ubuntu7.8, automatic), firmware-sof-signed:arm64 (2023.12.1-1ubuntu1.10, automatic), bluez-obexd:arm64 (5.72-0ubuntu5.5, automatic), busybox-static:arm64 (1:1.36.1-6ubuntu3.1), liblouis20:arm64 (3.29.0-1build1, automatic), sssd-proxy:arm64 (2.9.4-1.1ubuntu6.3, automatic), liblangtag-common:arm64 (0.6.7-1build2, automatic), cups-client:arm64 (2.4.7-1.2ubuntu7.9, automatic), baobab:arm64 (46.0-1build1, automatic), remmina-plugin-vnc:arm64 (1.4.35+dfsg-0ubuntu5.1, automatic), cups-ppdc:arm64 (2.4.7-1.2ubuntu7.9, automatic), alsa-ucm-conf:arm64 (1.2.10-1ubuntu5.9, automatic), libxml-xpathengine-perl:arm64 (0.14-2, automatic), gir1.2-wnck-3.0:arm64 (43.0-3build4, automatic), speech-dispatcher-espeak-ng:arm64 (0.12.0~rc2-2build3, automatic), libwayland-server0:arm64 (1.22.0-2.1build1, automatic), libcolorhug2:arm64 (1.4.7-1build2, automatic), libglx0:arm64 (1.7.0-1build1, automatic), dbus-daemon:arm64 (1.14.10-4ubuntu4.1, automatic), gnome-session-bin:arm64 (46.0-1ubuntu4, automatic), laptop-detect:arm64 (0.16, automatic), libblockdev-fs3:arm64 (3.1.1-1ubuntu0.1, automatic), libgcr-ui-3-1:arm64 (3.41.2-1build3, automatic), libmutter-14-0:arm64 (46.2-1ubuntu0.24.04.14, automatic), libcaca0:arm64 (0.99.beta20-4ubuntu0.1, automatic), python3-distro:arm64 (1.9.0-1, automatic), cups-daemon:arm64 (2.4.7-1.2ubuntu7.9, automatic), ubuntu-settings:arm64 (24.04.6), libedataserver-1.2-27t64:arm64 (3.52.3-0ubuntu1.1, automatic), update-inetd:arm64 (4.53, automatic), libjansson4:arm64 (2.14-2build2, automatic), libfribidi0:arm64 (1.0.13-3build1, automatic), ubuntu-advantage-desktop-daemon:arm64 (1.11ubuntu0.1, automatic), mesa-libgallium:arm64 (25.2.8-0ubuntu0.24.04.1, automatic), libencode-locale-perl:arm64 (1.05-3, automatic), libraw1394-11:arm64 (2.1.2-2build3, automatic), librtmp1:arm64 (2.4+20151223.gitfa8646d.1-2build7, automatic), python3-defer:arm64 (1.0.6-2.1ubuntu1, automatic), libreiserfscore0t64:arm64 (1:3.6.27-7.1build1, automatic), wireless-tools:arm64 (30~pre9-16.1ubuntu2, automatic), colord:arm64 (1.4.7-1build2, automatic), libproxy1-plugin-networkmanager:arm64 (0.5.4-4build1, automatic), rpi-eeprom-firmware:arm64 (26.3-0ubuntu0.24.04.2, automatic), dmraid:arm64 (1.0.0.rc16-12ubuntu2, automatic), libsonic0:arm64 (0.2.0-13build1, automatic), libmanette-0.2-0:arm64 (0.2.7-1build2, automatic), liblua5.4-0:arm64 (5.4.6-3build2, automatic), xserver-xorg-input-all:arm64 (1:7.7+23ubuntu3, automatic), adwaita-icon-theme:arm64 (46.0-1, automatic), libgoa-1.0-0b:arm64 (3.50.4-0ubuntu2, automatic), plymouth-theme-spinner:arm64 (24.004.60-1ubuntu7.1, automatic), libsgutils2-1.46-2:arm64 (1.46-3ubuntu4, automatic), libgpm2:arm64 (1.20.7-11, automatic), vim-common:arm64 (2:9.1.0016-1ubuntu7.9, automatic), libwebpdemux2:arm64 (1.3.2-0.4build3, automatic), liblvm2cmd2.03:arm64 (2.03.16-3ubuntu3.2, automatic), libreoffice-draw:arm64 (4:24.2.7-0ubuntu0.24.04.4, automatic), libjavascriptcoregtk-4.1-0:arm64 (2.50.4-0ubuntu0.24.04.1, automatic), libtiff6:arm64 (4.5.1+git230720-4ubuntu2.4, automatic), libdrm-nouveau2:arm64 (2.4.125-1ubuntu0.1~24.04.1, automatic), libinput10:arm64 (1.25.0-1ubuntu3.2, automatic), printer-driver-c2esp:arm64 (27-11ubuntu7, automatic), libgs10:arm64 (10.02.1~dfsg1-0ubuntu7.8, automatic), gnome-system-monitor:arm64 (46.0-1build1, automatic), language-selector-gnome:arm64 (0.225), libip4tc2:arm64 (1.8.10-3ubuntu2, automatic), software-properties-common:arm64 (0.99.49.3, automatic), thunderbird:arm64 (2:1snap1-0ubuntu3, automatic), libpixman-1-0:arm64 (0.42.2-1build1, automatic), libtag1v5:arm64 (1.13.1-1build1, automatic), liblirc-client0t64:arm64 (0.10.2-0.8build1, automatic), libqpdf29t64:arm64 (11.9.0-1.1ubuntu0.1, automatic), librsync2t64:arm64 (2.3.4-1.1ubuntu2, automatic), libplist-2.0-4:arm64 (2.3.0-1~exp2build2, automatic), libraw23t64:arm64 (0.21.2-2.1ubuntu0.24.04.1, automatic), linux-sound-base:arm64 (1.0.25+dfsg-0ubuntu7, automatic), transmission-gtk:arm64 (4.0.5-1build5, automatic), libfreetype6:arm64 (2.13.2+dfsg-1build3, automatic), printer-driver-brlaser:arm64 (6-3build2, automatic), libclucene-contribs1t64:arm64 (2.3.3.4+dfsg-1.2ubuntu2, automatic), pci.ids:arm64 (0.0~2024.03.31-1ubuntu0.1, automatic), sysstat:arm64 (12.6.1-2, automatic), libtcl8.6:arm64 (8.6.14+dfsg-1build1, automatic), tracker-miner-fs:arm64 (3.7.1-1ubuntu0.1, automatic), libgupnp-1.6-0:arm64 (1.6.6-1build3, automatic), gir1.2-gnomedesktop-3.0:arm64 (44.0-5build2, automatic), gir1.2-javascriptcoregtk-4.1:arm64 (2.50.4-0ubuntu0.24.04.1, automatic), sound-icons:arm64 (0.1-8, automatic), libwhoopsie-preferences0:arm64 (23build3, automatic), gir1.2-gnomedesktop-4.0:arm64 (44.0-5build2, automatic), libshout3:arm64 (2.4.6-1build2, automatic), gstreamer1.0-tools:arm64 (1.24.2-1ubuntu0.1, automatic), udisks2:arm64 (2.10.1-6ubuntu1.3, automatic), libcairomm-1.16-1:arm64 (1.18.0-1build1, automatic), libxau6:arm64 (1:1.0.9-1build6, automatic), libxaw7:arm64 (2:1.0.14-1build2, automatic), totem-common:arm64 (43.0-2ubuntu4, automatic), emacsen-common:arm64 (3.0.5, automatic), libgtk2.0-0t64:arm64 (2.24.33-4ubuntu1.1, automatic), file:arm64 (1:5.45-3build1), rhythmbox-plugins:arm64 (3.4.7-2ubuntu6, automatic), bzip2:arm64 (1.0.8-5.1build0.1, automatic), python3-requests:arm64 (2.31.0+dfsg-1ubuntu1.1, automatic), gir1.2-javascriptcoregtk-6.0:arm64 (2.50.4-0ubuntu0.24.04.1, automatic), libdata-dump-perl:arm64 (1.25-1, automatic), libpipeline1:arm64 (1.5.7-2, automatic), aptdaemon:arm64 (1.1.1+bzr982-0ubuntu44, automatic), libnss-systemd:arm64 (255.4-1ubuntu8.12, automatic), libpopt0:arm64 (1.19+dfsg-1build1, automatic), libxcb1:arm64 (1.15-1ubuntu2, automatic), openprinting-ppds:arm64 (20230202-1, automatic), libpam-fprintd:arm64 (1.94.3-1, automatic), libgstreamer-gl1.0-0:arm64 (1.24.2-1ubuntu0.3, automatic), gir1.2-webkit2-4.1:arm64 (2.50.4-0ubuntu0.24.04.1, automatic), avahi-daemon:arm64 (0.8-13ubuntu6.1, automatic), libgtkmm-4.0-0:arm64 (4.10.0-4build3, automatic), logrotate:arm64 (3.21.0-2build1, automatic), libapparmor1:arm64 (4.0.1really4.0.1-0ubuntu0.24.04.5, automatic), libwbclient0:arm64 (2:4.19.5+dfsg-4ubuntu9.4, automatic), liblwp-mediatypes-perl:arm64 (6.04-2, automatic), sssd-ad-common:arm64 (2.9.4-1.1ubuntu6.3, automatic), libllvm20:arm64 (1:20.1.2-0ubuntu1~24.04.2, automatic), install-info:arm64 (7.1-3build2, automatic), librsvg2-common:arm64 (2.58.0+dfsg-1build1, automatic), gnome-remote-desktop:arm64 (46.3-0ubuntu1.2, automatic), libxcomposite1:arm64 (1:0.4.5-1build3, automatic), keyboxd:arm64 (2.4.4-2ubuntu17.4, automatic), libnuma1:arm64 (2.0.18-1ubuntu0.24.04.1, automatic), libreadline8t64:arm64 (8.2-4build1, automatic), libfile-desktopentry-perl:arm64 (0.22-3, automatic), libgamemodeauto0:arm64 (1.8.1-2build1, automatic), python3-speechd:arm64 (0.12.0~rc2-2build3, automatic), libreoffice-uiconfig-calc:arm64 (4:24.2.7-0ubuntu0.24.04.4, automatic), libboost-iostreams1.83.0:arm64 (1.83.0-2.1ubuntu3.2, automatic), libparted-fs-resize0t64:arm64 (3.6-4build1, automatic), plymouth-theme-ubuntu-text:arm64 (24.004.60-1ubuntu7.1, automatic), libgspell-1-2:arm64 (1.12.2-1build4, automatic), python3-httplib2:arm64 (0.20.4-3, automatic), python3:arm64 (3.12.3-0ubuntu2.1), libatasmart4:arm64 (0.19-5build3, automatic), system-config-printer-udev:arm64 (1.5.18-1ubuntu9, automatic), libxft2:arm64 (2.3.6-1build1, automatic), libwpd-0.10-10:arm64 (0.10.3-2build2, automatic), libdbus-1-3:arm64 (1.14.10-4ubuntu4.1, automatic), language-pack-en:arm64 (1:24.04+20260127, automatic), libcdio19t64:arm64 (2.1.0-4.1ubuntu1.2, automatic), x11-utils:arm64 (7.7+6build2, automatic), libhtml-tree-perl:arm64 (5.07-3, automatic), sssd-ipa:arm64 (2.9.4-1.1ubuntu6.3, automatic), wireless-regdb:arm64 (2025.07.10-0ubuntu1~24.04.1, automatic), python3-urllib3:arm64 (2.0.7-1ubuntu0.6, automatic), pipewire:arm64 (1.0.5-1ubuntu3.2, automatic), libxdamage1:arm64 (1:1.1.6-1build1, automatic), ubuntu-report:arm64 (1.7.3ubuntu0.24.04.3, automatic), libgdk-pixbuf-2.0-0:arm64 (2.42.10+dfsg-3ubuntu3.2, automatic), dbus-bin:arm64 (1.14.10-4ubuntu4.1, automatic), python3-aptdaemon:arm64 (1.1.1+bzr982-0ubuntu44, automatic), libpath-utils1t64:arm64 (0.6.2-2.1build1, automatic), gir1.2-gnomeautoar-0.1:arm64 (0.4.4-2build4, automatic), libjavascriptcoregtk-6.0-1:arm64 (2.50.4-0ubuntu0.24.04.1, automatic), libtraceevent1-plugin:arm64 (1:1.8.2-1ubuntu2.1, automatic), gnupg:arm64 (2.4.4-2ubuntu17.4, automatic), gir1.2-rb-3.0:arm64 (3.4.7-2ubuntu6, automatic), libsasl2-modules-db:arm64 (2.1.28+dfsg1-5ubuntu3.1, automatic), libmpfr6:arm64 (4.2.1-1build1.1, automatic), liblouis-data:arm64 (3.29.0-1build1, automatic), xserver-xorg:arm64 (1:7.7+23ubuntu3, automatic), gvfs-fuse:arm64 (1.54.4-0ubuntu1~24.04.1, automatic), lp-solve:arm64 (5.5.2.5-2ubuntu0.1, automatic), libgoa-backend-1.0-2:arm64 (3.50.4-0ubuntu2, automatic), dracut-install:arm64 (060+5-1ubuntu3.3, automatic), brltty:arm64 (6.6-4ubuntu5, automatic), libmailtools-perl:arm64 (2.21-2, automatic), gstreamer1.0-plugins-base-apps:arm64 (1.24.2-1ubuntu0.3), flashrom:arm64 (1.3.0-2.1ubuntu2, automatic), libkrb5support0:arm64 (1.20.1-6ubuntu2.6, automatic), libcupsfilters2-common:arm64 (2.0.0-0ubuntu7.2, automatic), libwmf-0.2-7:arm64 (0.2.13-1.1build3, automatic), libodfgen-0.1-1:arm64 (0.1.8-2build3, automatic), libgpod-common:arm64 (0.8.3-19.1ubuntu4, automatic), python3-software-properties:arm64 (0.99.49.3, automatic), libsane-hpaio:arm64 (3.23.12+dfsg0-0ubuntu5, automatic), libcairo-gobject2:arm64 (1.18.0-3build1, automatic), libraspberrypi0:arm64 (0~20230913+gitcc1ca18-0ubuntu2, automatic), ldap-utils:arm64 (2.6.10+dfsg-0ubuntu0.24.04.1, automatic), squashfs-tools:arm64 (1:4.6.1-1build1, automatic), poppler-data:arm64 (0.4.12-1, automatic), fonts-noto-mono:arm64 (20201225-2, automatic), python3-pyparsing:arm64 (3.1.1-1, automatic), libwmf-0.2-7-gtk:arm64 (0.2.13-1.1build3, automatic), liblerc4:arm64 (4.0.0+ds-4ubuntu2, automatic), libbpf1:arm64 (1:1.3.0-2build2, automatic), ubuntu-mono:arm64 (24.04-0ubuntu1, automatic), libfastjson4:arm64 (1.2304.0-1build1, automatic), libmnl0:arm64 (1.0.5-2build1, automatic), libeatmydata1:arm64 (131-1ubuntu1, automatic), libreoffice-impress:arm64 (4:24.2.7-0ubuntu0.24.04.4, automatic), xserver-xorg-video-vesa:arm64 (1:2.6.0-1ubuntu0.1, automatic), python3-lazr.uri:arm64 (1.0.6-3, automatic), gir1.2-gtk-3.0:arm64 (3.24.41-4ubuntu1.3, automatic), libextutils-depends-perl:arm64 (0.8001-2, automatic), gvfs-common:arm64 (1.54.4-0ubuntu1~24.04.1, automatic), libgdbm6t64:arm64 (1.23-5.1build1, automatic), libglibmm-2.68-1t64:arm64 (2.78.1-2.2build2, automatic), libxml2:arm64 (2.9.14+dfsg-1.3ubuntu3.7, automatic), librygel-server-2.8-0:arm64 (0.42.5-1ubuntu3, automatic), switcheroo-control:arm64 (2.6-2build2, automatic), libxmu6:arm64 (2:1.1.3-3build2, automatic), gvfs-libs:arm64 (1.54.4-0ubuntu1~24.04.1, automatic), gir1.2-gtk-4.0:arm64 (4.14.5+ds-0ubuntu0.7, automatic), mutter-common:arm64 (46.2-1ubuntu0.24.04.14, automatic), libefivar1t64:arm64 (38-3.1build1, automatic), libmpc3:arm64 (1.3.1-1build1.1, automatic), gir1.2-packagekitglib-1.0:arm64 (1.2.8-2ubuntu1.4, automatic), xz-utils:arm64 (5.6.1+really5.4.5-1ubuntu0.2), libglib2.0-data:arm64 (2.80.0-6ubuntu3.8, automatic), gnome-calendar:arm64 (46.1-0ubuntu2, automatic), humanity-icon-theme:arm64 (0.6.16, automatic), network-manager-gnome:arm64 (1.34.0-1ubuntu3, automatic), libgtk2.0-common:arm64 (2.24.33-4ubuntu1.1, automatic), libgraphite2-3:arm64 (1.3.14-2build1, automatic), gstreamer1.0-alsa:arm64 (1.24.2-1ubuntu0.3), libbsd0:arm64 (0.12.1-1build1.1, automatic), python3-jsonpatch:arm64 (1.32-3, automatic), libgee-0.8-2:arm64 (0.20.6-1build2, automatic), gnome-shell:arm64 (46.0-0ubuntu6~24.04.13), cloud-guest-utils:arm64 (0.33-1, automatic), less:arm64 (590-2ubuntu2.1), python-apt-common:arm64 (2.7.7ubuntu5.2, automatic), gir1.2-gst-plugins-base-1.0:arm64 (1.24.2-1ubuntu0.3, automatic), remmina-plugin-secret:arm64 (1.4.35+dfsg-0ubuntu5.1, automatic), libdconf1:arm64 (0.40.0-4ubuntu0.1, automatic), libxpm4:arm64 (1:3.5.17-1build2, automatic), libnma-common:arm64 (1.10.6-3build2, automatic), libfontconfig1:arm64 (2.15.0-1.1ubuntu2, automatic), libhunspell-1.7-0:arm64 (1.7.2+really1.7.2-10build3, automatic), libcups2t64:arm64 (2.4.7-1.2ubuntu7.9, automatic), fonts-opensymbol:arm64 (4:102.12+LibO24.2.7-0ubuntu0.24.04.4, automatic), psmisc:arm64 (23.7-1build1), libraspberrypi-bin:arm64 (0~20230913+gitcc1ca18-0ubuntu2), libsbc1:arm64 (2.0-1build1, automatic), wamerican:arm64 (2020.12.07-2, automatic), systemd:arm64 (255.4-1ubuntu8.12, automatic), libtotem0:arm64 (43.0-2ubuntu4, automatic), mtr-tiny:arm64 (0.95-1.1ubuntu0.1, automatic), gpg-agent:arm64 (2.4.4-2ubuntu17.4, automatic), libstemmer0d:arm64 (2.2.0-4build1, automatic), console-setup-linux:arm64 (1.226ubuntu1, automatic), libexempi8:arm64 (2.6.5-1build1, automatic), trace-cmd:arm64 (3.2-1ubuntu2, automatic), gir1.2-timezonemap-1.0:arm64 (0.4.6-6ubuntu1, automatic), wget:arm64 (1.21.4-1ubuntu4.1), dpkg-repack:arm64 (1.52, automatic), libxcvt0:arm64 (0.1.2-1build1, automatic), libgxps2t64:arm64 (0.3.2-4build3, automatic), cups-filters-core-drivers:arm64 (2.0.0-0ubuntu4.1, automatic), gir1.2-geoclue-2.0:arm64 (2.7.0-3ubuntu7, automatic), shared-mime-info:arm64 (2.4-4, automatic), grub-efi-arm64:arm64 (2.12-1ubuntu7.3, automatic), p11-kit-modules:arm64 (0.25.3-4ubuntu2.1, automatic), remmina:arm64 (1.4.35+dfsg-0ubuntu5.1, automatic), poppler-utils:arm64 (24.02.0-1ubuntu9.8, automatic), liblocale-gettext-perl:arm64 (1.07-6ubuntu5, automatic), libatspi2.0-0t64:arm64 (2.52.0-1build1, automatic), libcdr-0.1-1:arm64 (0.1.7-1build2, automatic), glib-networking-common:arm64 (2.80.0-1build1, automatic), fdisk:arm64 (2.39.3-9ubuntu6.4, automatic), numactl:arm64 (2.0.18-1ubuntu0.24.04.1, automatic), libgles2:arm64 (1.7.0-1build1, automatic), libgl1-mesa-dri:arm64 (25.2.8-0ubuntu0.24.04.1, automatic), gnome-settings-daemon-common:arm64 (46.0-1ubuntu1.24.04.1, automatic), im-config:arm64 (0.57-2, automatic), desktop-file-utils:arm64 (0.27-2build1, automatic), libappstream5:arm64 (1.0.2-1build6, automatic), libcurl3t64-gnutls:arm64 (8.5.0-2ubuntu10.6, automatic), power-profiles-daemon:arm64 (0.21-1ubuntu1, automatic), cups-ipp-utils:arm64 (2.4.7-1.2ubuntu7.9, automatic), ubuntu-wallpapers:arm64 (24.04.2, automatic), libyaml-0-2:arm64 (0.2.5-1build1, automatic), libcdio-cdda2t64:arm64 (10.2+2.0.1-1.1build2, automatic), libini-config5t64:arm64 (0.6.2-2.1build1, automatic), appstream:arm64 (1.0.2-1build6, automatic), libespeak-ng1:arm64 (1.51+dfsg-12build1, automatic), libheif-plugin-aomdec:arm64 (1.17.6-1ubuntu4.2, automatic), libcupsimage2t64:arm64 (2.4.7-1.2ubuntu7.9, automatic), libcairo-script-interpreter2:arm64 (1.18.0-3build1, automatic), libbytesize-common:arm64 (2.10-1ubuntu2, automatic), libasound2t64:arm64 (1.2.11-1ubuntu0.1, automatic), ubuntu-wallpapers-noble:arm64 (24.04.2, automatic), libvolume-key1:arm64 (0.3.12-7build2, automatic), libcamera0.2:arm64 (0.2.0-3fakesync1build6, automatic), libarchive13t64:arm64 (3.7.2-2ubuntu0.5, automatic), gettext-base:arm64 (0.21-14ubuntu2, automatic), libmaxminddb0:arm64 (1.9.1-1build1, automatic), libheif-plugin-aomenc:arm64 (1.17.6-1ubuntu4.2, automatic), inputattach:arm64 (1:1.8.1-2build1, automatic), libxrandr2:arm64 (2:1.5.2-2build1, automatic), strace:arm64 (6.8-0ubuntu2), libxxf86dga1:arm64 (2:1.1.5-1build1, automatic), python3-louis:arm64 (3.29.0-1build1, automatic), xserver-xorg-legacy:arm64 (2:21.1.12-1ubuntu1.5, automatic), publicsuffix:arm64 (20231001.0357-0.1, automatic), python3-attr:arm64 (23.2.0-2, automatic), libtss2-tcti-spi-helper0t64:arm64 (4.0.1-7.1ubuntu5.1, automatic), libsoup2.4-common:arm64 (2.74.3-6ubuntu1.6, automatic), gamemode:arm64 (1.8.1-2build1, automatic), libxfont2:arm64 (1:2.0.6-1build1, automatic), python3-pkg-resources:arm64 (68.1.2-2ubuntu1.2, automatic), gnome-logs:arm64 (45.0-1build1, automatic), python3-wadllib:arm64 (1.3.6-5, automatic), libpagemaker-0.0-0:arm64 (0.0.4-1build4, automatic), libfontenc1:arm64 (1:1.1.8-1build1, automatic), python3-gdbm:arm64 (3.12.3-0ubuntu1, automatic), libmhash2:arm64 (0.9.9.9-9build3, automatic), fontconfig-config:arm64 (2.15.0-1.1ubuntu2, automatic), libdebian-installer4:arm64 (0.124ubuntu2, automatic), libfdisk1:arm64 (2.39.3-9ubuntu6.4, automatic), libsoup-2.4-1:arm64 (2.74.3-6ubuntu1.6, automatic), xbitmaps:arm64 (1.1.1-2.2, automatic), gdisk:arm64 (1.0.10-1build1, automatic), evince-common:arm64 (46.3.1-0ubuntu1, automatic), gtk2-engines-murrine:arm64 (0.98.2-4, automatic), secureboot-db:arm64 (1.9build1, automatic), systemd-dev:arm64 (255.4-1ubuntu8.12, automatic), gnome-snapshot:arm64 (46.2-1ubuntu2, automatic), libmp3lame0:arm64 (3.100-6build1, automatic), liburi-perl:arm64 (5.27-1, automatic), language-selector-common:arm64 (0.225, automatic), system-config-printer-common:arm64 (1.5.18-1ubuntu9, automatic), firefox:arm64 (1:1snap1-0ubuntu5, automatic), libfftw3-single3:arm64 (3.3.10-1ubuntu3, automatic), dbus-x11:arm64 (1.14.10-4ubuntu4.1, automatic), gir1.2-graphene-1.0:arm64 (1.10.8-3build2, automatic), printer-driver-foo2zjs:arm64 (20200505dfsg0-2ubuntu6, automatic), libdrm-common:arm64 (2.4.125-1ubuntu0.1~24.04.1, automatic), ubuntu-desktop:arm64 (1.539.2), libx11-data:arm64 (2:1.8.7-1build1, automatic), python3-babel:arm64 (2.10.3-3build1, automatic), eject:arm64 (2.39.3-9ubuntu6.4), libsoup-3.0-0:arm64 (3.4.4-5ubuntu0.7, automatic), libpython3.12t64:arm64 (3.12.3-1ubuntu0.11, automatic), usbutils:arm64 (1:017-3build1), packagekit:arm64 (1.2.8-2ubuntu1.4, automatic), libtracefs1:arm64 (1.8.0-1ubuntu1, automatic), libgudev-1.0-0:arm64 (1:238-5ubuntu1, automatic), libmsgraph-0-1:arm64 (0.2.1-0ubuntu3, automatic), gcr4:arm64 (4.2.0-5, automatic), rhythmbox:arm64 (3.4.7-2ubuntu6, automatic), python3-mdurl:arm64 (0.1.2-1, automatic), libnotify-bin:arm64 (0.8.3-1build2), lshw:arm64 (02.19.git.2021.06.19.996aaad9c7-2build3), libhttp-cookies-perl:arm64 (6.11-1, automatic), lsof:arm64 (4.95.0-1build3), libgstreamer-plugins-good1.0-0:arm64 (1.24.2-1ubuntu1.2, automatic), libgirepository-1.0-1:arm64 (1.80.1-1, automatic), gdm3:arm64 (46.2-1ubuntu1~24.04.6), libavc1394-0:arm64 (0.5.4-5build3, automatic), libsodium23:arm64 (1.0.18-1ubuntu0.24.04.1, automatic), python3-pexpect:arm64 (4.9-2, automatic), libgnome-bluetooth-3.0-13:arm64 (46.0-1ubuntu1, automatic), libio-html-perl:arm64 (1.004-3, automatic), xdg-user-dirs:arm64 (0.18-1build1, automatic), network-manager-pptp-gnome:arm64 (1.2.12-3build2, automatic), libfile-fcntllock-perl:arm64 (0.22-4ubuntu5, automatic), libfuse3-3:arm64 (3.14.0-5build1, automatic), python3-jsonschema:arm64 (4.10.3-2ubuntu1, automatic), oem-config:arm64 (24.04.5), gnome-calculator:arm64 (1:46.3-0ubuntu0.1, automatic), libjson-glib-1.0-common:arm64 (1.8.0-2build2, automatic), totem-plugins:arm64 (43.0-2ubuntu4, automatic), libpulse-mainloop-glib0:arm64 (1:16.1+dfsg1-2ubuntu10.1, automatic), libwoff1:arm64 (1.0.2-2build1, automatic), lvm2:arm64 (2.03.16-3ubuntu3.2, automatic), libudisks2-0:arm64 (2.10.1-6ubuntu1.3, automatic), locales:arm64 (2.39-0ubuntu8.7), gnome-shell-extension-desktop-icons-ng:arm64 (46+really47.0.9-1ubuntu5), dnsmasq-base:arm64 (2.90-2ubuntu0.1, automatic), python3-oauthlib:arm64 (3.2.2-1, automatic), libaspell15:arm64 (0.60.8.1-1build1, automatic), mousetweaks:arm64 (3.32.0-4build2, automatic), python3-rich:arm64 (13.7.1-1, automatic), docbook-xml:arm64 (4.5-12, automatic), ghostscript:arm64 (10.02.1~dfsg1-0ubuntu7.8, automatic), linux-modules-6.8.0-1047-raspi:arm64 (6.8.0-1047.51, automatic), apt-config-icons:arm64 (1.0.2-1build6, automatic), ubuntu-pro-client-l10n:arm64 (37.1ubuntu0~24.04, automatic), gnome-themes-extra-data:arm64 (3.28-2ubuntu5, automatic), libpwquality1:arm64 (1.4.5-3build1, automatic), gir1.2-nm-1.0:arm64 (1.46.0-1ubuntu2.5, automatic), fonts-urw-base35:arm64 (20200910-8, automatic), powermgmt-base:arm64 (1.37ubuntu0.1, automatic), gir1.2-girepository-2.0:arm64 (1.80.1-1, automatic), libwmflite-0.2-7:arm64 (0.2.13-1.1build3, automatic), libunity9:arm64 (7.1.4+19.04.20190319-6build4, automatic), klibc-utils:arm64 (2.0.13-4ubuntu0.2, automatic), libopus0:arm64 (1.4-1build1, automatic), libxt6t64:arm64 (1:1.2.1-1.2build1, automatic), gir1.2-ibus-1.0:arm64 (1.5.29-2, automatic), libreoffice-style-colibre:arm64 (4:24.2.7-0ubuntu0.24.04.4, automatic), libuchardet0:arm64 (0.0.8-1build1, automatic), libpangocairo-1.0-0:arm64 (1.52.1+ds-1build1, automatic), ibus-data:arm64 (1.5.29-2, automatic), libndp0:arm64 (1.8-1fakesync1ubuntu0.24.04.1, automatic), file-roller:arm64 (44.3-0ubuntu1, automatic), libxkbcommon0:arm64 (1.6.0-1build1, automatic), gstreamer1.0-x:arm64 (1.24.2-1ubuntu0.3, automatic), libwnck-3-common:arm64 (43.0-3build4, automatic), libxtst6:arm64 (2:1.2.3-1.1build1, automatic), libuv1t64:arm64 (1.48.0-1.1build1, automatic), libnvme1t64:arm64 (1.8-3ubuntu1, automatic), libkrb5-3:arm64 (1.20.1-6ubuntu2.6, automatic), gir1.2-accountsservice-1.0:arm64 (23.13.9-2ubuntu6, automatic), libgnome-menu-3-0:arm64 (3.36.0-1.1ubuntu3, automatic), glib-networking-services:arm64 (2.80.0-1build1, automatic), libatk-adaptor:arm64 (2.52.0-1build1), libprotobuf-c1:arm64 (1.4.1-1ubuntu4, automatic), seahorse:arm64 (43.0-3build2, automatic), librasqal3t64:arm64 (0.9.33-2.1build1, automatic), xauth:arm64 (1:1.1.2-1build1, automatic), yaru-theme-sound:arm64 (24.04.2-0ubuntu1, automatic), fwupd-signed:arm64 (1.52+1.4-1, automatic), dconf-cli:arm64 (0.40.0-4ubuntu0.1, automatic), libpcsclite1:arm64 (2.0.3-1build1, automatic), yaru-theme-gtk:arm64 (24.04.2-0ubuntu1, automatic), libavahi-ui-gtk3-0:arm64 (0.8-13ubuntu6.1, automatic), gir1.2-peas-1.0:arm64 (1.36.0-3build4, automatic), flash-kernel:arm64 (3.107ubuntu13~24.04.6), gnome-settings-daemon:arm64 (46.0-1ubuntu1.24.04.1), libvncclient1:arm64 (0.9.14+dfsg-1build2, automatic), gir1.2-gnomebluetooth-3.0:arm64 (46.0-1ubuntu1, automatic), gnome-shell-extension-appindicator:arm64 (58-1ubuntu24.04.1), libaio1t64:arm64 (0.3.113-6build1.1, automatic), printer-driver-min12xxw:arm64 (0.0.9-11build3, automatic), gir1.2-totem-1.0:arm64 (43.0-2ubuntu4, automatic), libblockdev-loop3:arm64 (3.1.1-1ubuntu0.1, automatic), libvte-2.91-common:arm64 (0.76.0-1ubuntu0.1, automatic), libcamel-1.2-64t64:arm64 (3.52.3-0ubuntu1.1, automatic), libnet-http-perl:arm64 (6.23-1, automatic), libwps-0.4-4:arm64 (0.4.14-2build1, automatic), libharfbuzz-icu0:arm64 (8.3.0-2build2, automatic), libxcb-render0:arm64 (1.15-1ubuntu2, automatic), libspa-0.2-bluetooth:arm64 (1.0.5-1ubuntu3.2, automatic), sgml-data:arm64 (2.0.11+nmu1, automatic), cloud-init:arm64 (25.2-0ubuntu1~24.04.1, automatic), printer-driver-postscript-hp:arm64 (3.23.12+dfsg0-0ubuntu5, automatic), gstreamer1.0-gtk3:arm64 (1.24.2-1ubuntu1.2, automatic), manpages:arm64 (6.7-2, automatic), linux-base:arm64 (4.5ubuntu9+24.04.1, automatic), libreoffice-writer:arm64 (4:24.2.7-0ubuntu0.24.04.4, automatic), update-notifier:arm64 (3.192.68.2), xserver-common:arm64 (2:21.1.12-1ubuntu1.5, automatic), xcursor-themes:arm64 (1.0.6-0ubuntu1, automatic), libusb-1.0-0:arm64 (2:1.0.27-1, automatic), man-db:arm64 (2.12.0-4build2), python3-mako:arm64 (1.3.2-1, automatic), xwayland:arm64 (2:23.2.6-1ubuntu0.8, automatic), libvisual-0.4-0:arm64 (0.4.2-2build1, automatic), libblockdev3:arm64 (3.1.1-1ubuntu0.1, automatic), python3-cairo:arm64 (1.25.1-2build2, automatic), ipp-usb:arm64 (0.9.24-0ubuntu3.3, automatic), duplicity:arm64 (2.1.4-3ubuntu2, automatic), cpp-13-aarch64-linux-gnu:arm64 (13.3.0-6ubuntu2~24.04, automatic), libgssdp-1.6-0:arm64 (1.6.3-1build3, automatic), printer-driver-pxljr:arm64 (1.4+repack0-6build2, automatic), libfprint-2-tod1:arm64 (1:1.94.7+tod1-0ubuntu5~24.04.4, automatic), libtext-charwidth-perl:arm64 (0.04-11build3, automatic), hunspell-en-us:arm64 (1:2020.12.07-2, automatic), libefiboot1t64:arm64 (38-3.1build1, automatic), libsmbclient0:arm64 (2:4.19.5+dfsg-4ubuntu9.4, automatic), dictionaries-common:arm64 (1.29.7, automatic), gsettings-desktop-schemas:arm64 (46.1-0ubuntu1, automatic), python3-click:arm64 (8.1.6-2, automatic), fonts-noto-core:arm64 (20201225-2, automatic), libgnomekbd-common:arm64 (3.28.1-1build3, automatic), xserver-xorg-video-radeon:arm64 (1:22.0.0-1build1, automatic), gstreamer1.0-libcamera:arm64 (0.2.0-3fakesync1build6, automatic), libnotify4:arm64 (0.8.3-1build2, automatic), media-types:arm64 (10.1.0, automatic), libnma0:arm64 (1.10.6-3build2, automatic), libio-stringy-perl:arm64 (2.111-3, automatic), libboost-thread1.83.0:arm64 (1.83.0-2.1ubuntu3.2, automatic), sssd-krb5-common:arm64 (2.9.4-1.1ubuntu6.3, automatic), gstreamer1.0-plugins-good:arm64 (1.24.2-1ubuntu1.2, automatic), libwebrtc-audio-processing1:arm64 (0.3.1-0ubuntu6, automatic), libipc-system-simple-perl:arm64 (1.30-2, automatic), libsane-common:arm64 (1.2.1-7build4, automatic), libhtml-format-perl:arm64 (2.16-2, automatic), libteamdctl0:arm64 (1.31-1build3, automatic), libdjvulibre21:arm64 (3.5.28-2ubuntu0.24.04.1, automatic), uuid-runtime:arm64 (2.39.3-9ubuntu6.4, automatic), x11-session-utils:arm64 (7.7+6build2, automatic), libgupnp-av-1.0-3:arm64 (0.14.1-2build2, automatic), systemd-resolved:arm64 (255.4-1ubuntu8.12, automatic), linux-image-6.8.0-1047-raspi:arm64 (6.8.0-1047.51, automatic), gvfs-backends:arm64 (1.54.4-0ubuntu1~24.04.1, automatic), gstreamer1.0-plugins-base:arm64 (1.24.2-1ubuntu0.3, automatic), libdecor-0-plugin-1-gtk:arm64 (0.2.2-1build2, automatic), libphonenumber8:arm64 (8.12.57+ds-4.2build3, automatic), liblouisutdml-bin:arm64 (2.12.0-3.1build1, automatic), inetutils-telnet:arm64 (2:2.5-3ubuntu4.1, automatic), gir1.2-mutter-14:arm64 (46.2-1ubuntu0.24.04.14, automatic), libtraceevent1:arm64 (1:1.8.2-1ubuntu2.1, automatic), fprintd:arm64 (1.94.3-1, automatic), libgrilo-0.3-0:arm64 (0.3.16-1build3, automatic), gvfs:arm64 (1.54.4-0ubuntu1~24.04.1, automatic), liborcus-0.18-0:arm64 (0.19.2-3build3, automatic), libklibc:arm64 (2.0.13-4ubuntu0.2, automatic), vim-tiny:arm64 (2:9.1.0016-1ubuntu7.9), usb-modeswitch:arm64 (2.6.1-3ubuntu3, automatic), libmbim-proxy:arm64 (1.31.2-0ubuntu3.1, automatic), python3-json-pointer:arm64 (2.0-0ubuntu1, automatic), gvfs-daemons:arm64 (1.54.4-0ubuntu1~24.04.1, automatic), gnome-desktop3-data:arm64 (44.0-5build2, automatic), xcvt:arm64 (0.1.2-1build1, automatic), update-manager-core:arm64 (1:24.04.12, automatic), gstreamer1.0-pipewire:arm64 (1.0.5-1ubuntu3.2, automatic), libctf0:arm64 (2.42-4ubuntu2.8, automatic), libsss-nss-idmap0:arm64 (2.9.4-1.1ubuntu6.3, automatic), bind9-dnsutils:arm64 (1:9.18.39-0ubuntu0.24.04.2), libice6:arm64 (2:1.0.10-1build3, automatic), gnome-disk-utility:arm64 (46.0-1ubuntu3, automatic), gir1.2-handy-1:arm64 (1.8.3-1build2, automatic), libpoppler134:arm64 (24.02.0-1ubuntu9.8, automatic), network-manager:arm64 (1.46.0-1ubuntu2.5, automatic), mesa-vulkan-drivers:arm64 (25.2.8-0ubuntu0.24.04.1, automatic), libcue2:arm64 (2.2.1-4.1build1, automatic), libgphoto2-6t64:arm64 (2.5.31-2.1build2, automatic), libvorbisenc2:arm64 (1.3.7-1build3, automatic), fuse3:arm64 (3.14.0-5build1, automatic), libasyncns0:arm64 (0.8-6build4, automatic), ubuntu-raspi-settings-desktop:arm64 (24.04.4), busybox-initramfs:arm64 (1:1.36.1-6ubuntu3.1, automatic), libnfnetlink0:arm64 (1.0.2-2build1, automatic), libnss3:arm64 (2:3.98-1build1, automatic), rsyslog:arm64 (8.2312.0-3ubuntu9.1, automatic), libk5crypto3:arm64 (1.20.1-6ubuntu2.6, automatic), python3-jinja2:arm64 (3.1.2-1ubuntu1.3, automatic), libfreerdp3-3:arm64 (3.5.1+dfsg1-0ubuntu1.1, automatic), libpangoft2-1.0-0:arm64 (1.52.1+ds-1build1, automatic), libqmi-utils:arm64 (1.35.2-0ubuntu2, automatic), libtheora0:arm64 (1.1.1+dfsg.1-16.1build3, automatic), libblockdev-utils3:arm64 (3.1.1-1ubuntu0.1, automatic), plymouth:arm64 (24.004.60-1ubuntu7.1, automatic), libpolkit-gobject-1-0:arm64 (124-2ubuntu1.24.04.2, automatic), libgom-1.0-0t64:arm64 (0.5.0-1, automatic), libabsl20220623t64:arm64 (20220623.1-3.1ubuntu3.2, automatic), libtdb1:arm64 (1.4.10-1build1, automatic), xfonts-encodings:arm64 (1:1.0.5-0ubuntu2, automatic), python3-xkit:arm64 (0.5.0ubuntu6, automatic), libxcb-keysyms1:arm64 (0.4.0-1build4, automatic), friendly-recovery:arm64 (0.2.42, automatic), python3-fasteners:arm64 (0.18-2, automatic), cryptsetup-initramfs:arm64 (2:2.7.0-1ubuntu4.2, automatic), python3-apt:arm64 (2.7.7ubuntu5.2, automatic), dmsetup:arm64 (2:1.02.185-3ubuntu3.2, automatic), libref-array1t64:arm64 (0.6.2-2.1build1, automatic), software-properties-gtk:arm64 (0.99.49.3), gnome-online-accounts:arm64 (3.50.4-0ubuntu2, automatic), libunity-protocol-private0:arm64 (7.1.4+19.04.20190319-6build4, automatic), fonts-liberation:arm64 (1:2.1.5-3, automatic), zenity-common:arm64 (4.0.1-1build3, automatic), libsndfile1:arm64 (1.2.2-1ubuntu5.24.04.1, automatic), libdotconf0:arm64 (1.3-0.3fakesync1build3, automatic), libreoffice-uiconfig-draw:arm64 (4:24.2.7-0ubuntu0.24.04.4, automatic), libebook-contacts-1.2-4t64:arm64 (3.52.3-0ubuntu1.1, automatic), libcolamd3:arm64 (1:7.6.1+dfsg-1build1, automatic), libhttp-date-perl:arm64 (6.06-1, automatic), xdg-user-dirs-gtk:arm64 (0.11-1build2), grub-efi-arm64-signed:arm64 (1.202.5+2.12-1ubuntu7.3, automatic), xserver-xorg-input-libinput:arm64 (1.4.0-1ubuntu24.04.1, automatic), devio:arm64 (1.2-2build1, automatic), libopengl0:arm64 (1.7.0-1build1, automatic), enchant-2:arm64 (2.3.3-2build2, automatic), libnfs14:arm64 (5.0.2-1build1, automatic), libnautilus-extension4:arm64 (1:46.4-0ubuntu0.2, automatic), python3-serial:arm64 (3.5-2, automatic), librest-1.0-0:arm64 (0.9.1-6build3, automatic), zenity:arm64 (4.0.1-1build3), tcl8.6:arm64 (8.6.14+dfsg-1build1, automatic), gir1.2-polkit-1.0:arm64 (124-2ubuntu1.24.04.2, automatic), libedata-cal-2.0-2t64:arm64 (3.52.3-0ubuntu1.1, automatic), bolt:arm64 (0.9.7-1, automatic), snapd:arm64 (2.73+ubuntu24.04, automatic), systemd-hwe-hwdb:arm64 (255.1.6, automatic), alsa-utils:arm64 (1.2.9-1ubuntu5, automatic), libportal1:arm64 (0.7.1-5build5, automatic), apport-symptoms:arm64 (0.25, automatic), printer-driver-ptouch:arm64 (1.7-1build2, automatic), liborc-0.4-0t64:arm64 (1:0.4.38-1ubuntu0.1, automatic), python3-certifi:arm64 (2023.11.17-1, automatic), libsqlite3-0:arm64 (3.45.1-1ubuntu2.5, automatic), libpackagekit-glib2-18:arm64 (1.2.8-2ubuntu1.4, automatic), libtext-wrapi18n-perl:arm64 (0.06-10, automatic), rygel:arm64 (0.42.5-1ubuntu3, automatic), python3-pyudev:arm64 (0.24.0-1, automatic), libstartup-notification0:arm64 (0.12-6build3, automatic), rsync:arm64 (3.2.7-1ubuntu1.2), pinentry-curses:arm64 (1.2.1-3ubuntu5, automatic), libfile-basedir-perl:arm64 (0.09-2, automatic), cups-browsed:arm64 (2.0.0-0ubuntu10.3, automatic), libportal-gtk3-1:arm64 (0.7.1-5build5, automatic), libwebp7:arm64 (1.3.2-0.4build3, automatic), libjson-c5:arm64 (0.17-1build1, automatic), libcurl4t64:arm64 (8.5.0-2ubuntu10.6, automatic), gpgsm:arm64 (2.4.4-2ubuntu17.4, automatic), pipewire-audio:arm64 (1.0.5-1ubuntu3.2, automatic), liblangtag1:arm64 (0.6.7-1build2, automatic), libhtml-parser-perl:arm64 (3.81-1build3, automatic), pipewire-bin:arm64 (1.0.5-1ubuntu3.2, automatic), gnome-bluetooth-sendto:arm64 (46.0-1ubuntu1, automatic), liblttng-ust-common1t64:arm64 (2.13.7-1.1ubuntu2, automatic), binutils-aarch64-linux-gnu:arm64 (2.42-4ubuntu2.8, automatic), libtimezonemap1:arm64 (0.4.6-6ubuntu1, automatic), libportal-gtk4-1:arm64 (0.7.1-5build5, automatic), xorg:arm64 (1:7.7+23ubuntu3, automatic), python3-markdown-it:arm64 (3.0.0-2, automatic), python3-markupsafe:arm64 (2.1.5-1build2, automatic), libxslt1.1:arm64 (1.1.39-0exp1ubuntu0.24.04.3, automatic), python3-icu:arm64 (2.12-1build2, automatic), gnome-shell-common:arm64 (46.0-0ubuntu6~24.04.13, automatic), fonts-dejavu-mono:arm64 (2.37-8, automatic), libtss2-tctildr0t64:arm64 (4.0.1-7.1ubuntu5.1, automatic), python3-distro-info:arm64 (1.7build1, automatic), libxmlsec1t64-nss:arm64 (1.2.39-5build2, automatic), libdevmapper-event1.02.1:arm64 (2:1.02.185-3ubuntu3.2, automatic), cups-pk-helper:arm64 (0.2.6-1ubuntu8, automatic), liblc3-1:arm64 (1.0.4-3build1, automatic), libatk1.0-0t64:arm64 (2.52.0-1build1, automatic), dbus-session-bus-common:arm64 (1.14.10-4ubuntu4.1, automatic), libspeex1:arm64 (1.2.1-2ubuntu2.24.04.1, automatic), libboost-locale1.83.0:arm64 (1.83.0-2.1ubuntu3.2, automatic), libeditorconfig0:arm64 (0.12.7-0.1, automatic), x11-xkb-utils:arm64 (7.7+8build2, automatic), libcryptsetup12:arm64 (2:2.7.0-1ubuntu4.2, automatic), libcupsfilters2t64:arm64 (2.0.0-0ubuntu7.2, automatic), libasound2-data:arm64 (1.2.11-1ubuntu0.1, automatic), libglu1-mesa:arm64 (9.0.2-1.1build1, automatic), python3-jwt:arm64 (2.7.0-1, automatic), libwebkit2gtk-4.1-0:arm64 (2.50.4-0ubuntu0.24.04.1, automatic), gnome-control-center-data:arm64 (1:46.7-0ubuntu0.24.04.3, automatic), adduser:arm64 (3.137ubuntu1), ubuntu-session:arm64 (46.0-1ubuntu4), ubiquity-frontend-gtk:arm64 (24.04.5), libxcb-res0:arm64 (1.15-1ubuntu2, automatic), distro-info-data:arm64 (0.60ubuntu0.5, automatic), libflac12t64:arm64 (1.4.3+ds-2.1ubuntu2, automatic), libthai-data:arm64 (0.1.29-2build1, automatic), tracker-extract:arm64 (3.7.1-1ubuntu0.1, automatic), libevent-2.1-7t64:arm64 (2.1.12-stable-9ubuntu2, automatic), linux-firmware:arm64 (20240318.git3b128b60-0ubuntu2.23, automatic), libip6tc2:arm64 (1.8.10-3ubuntu2, automatic), libprotobuf32t64:arm64 (3.21.12-8.2ubuntu0.2, automatic), libcanberra0t64:arm64 (0.30-10ubuntu10, automatic), gir1.2-gdm-1.0:arm64 (46.2-1ubuntu1~24.04.6, automatic), libmwaw-0.3-3:arm64 (0.3.22-1build1, automatic), libblockdev-mdraid3:arm64 (3.1.1-1ubuntu0.1, automatic), libsysmetrics1:arm64 (1.7.3ubuntu0.24.04.3, automatic), libgstreamer1.0-0:arm64 (1.24.2-1ubuntu0.1, automatic), libavahi-common3:arm64 (0.8-13ubuntu6.1, automatic), cpp-13:arm64 (13.3.0-6ubuntu2~24.04, automatic), libwinpr3-3:arm64 (3.5.1+dfsg1-0ubuntu1.1, automatic), libfreerdp-server3-3:arm64 (3.5.1+dfsg1-0ubuntu1.1, automatic), libtss2-rc0t64:arm64 (4.0.1-7.1ubuntu5.1, automatic), libcanberra-gtk3-0t64:arm64 (0.30-10ubuntu10, automatic), binutils-common:arm64 (2.42-4ubuntu2.8, automatic), gir1.2-atk-1.0:arm64 (2.52.0-1build1, automatic), alsa-topology-conf:arm64 (1.2.5.1-2, automatic), libgtop2-common:arm64 (2.41.3-1ubuntu0.24.04.1, automatic), libhpmud0:arm64 (3.23.12+dfsg0-0ubuntu5, automatic), libminiupnpc17:arm64 (2.2.6-1build2, automatic), ca-certificates:arm64 (20240203, automatic), libdmraid1.0.0.rc16:arm64 (1.0.0.rc16-12ubuntu2, automatic), librsvg2-2:arm64 (2.58.0+dfsg-1build1, automatic), libsamplerate0:arm64 (0.2.2-4build1, automatic), libftdi1-2:arm64 (1.5-6build5, automatic), gnome-keyring:arm64 (46.1-2build1, automatic), perl-openssl-defaults:arm64 (7build3, automatic), network-manager-pptp:arm64 (1.2.12-3build2, automatic), libgnome-bg-4-2t64:arm64 (44.0-5build2, automatic), tnftp:arm64 (20230507-2build3, automatic), libtss2-tcti-mssim0t64:arm64 (4.0.1-7.1ubuntu5.1, automatic), libqmi-glib5:arm64 (1.35.2-0ubuntu2, automatic), libimagequant0:arm64 (2.18.0-1build1, automatic), libgtksourceview-5-0:arm64 (5.12.0-1build1, automatic), grub2-common:arm64 (2.12-1ubuntu7.3, automatic), python3-pam:arm64 (0.4.2-18build2, automatic), libtevent0t64:arm64 (0.16.1-2build1, automatic), python3-pil:arm64 (10.2.0-1ubuntu1, automatic), gir1.2-gnomebg-4.0:arm64 (44.0-5build2, automatic), thin-provisioning-tools:arm64 (0.9.0-2ubuntu5.1, automatic), libxcb-glx0:arm64 (1.15-1ubuntu2, automatic), libgphoto2-port12t64:arm64 (2.5.31-2.1build2, automatic), xinput:arm64 (1.6.4-1build1, automatic), libldacbt-enc2:arm64 (2.0.2.3+git20200429+ed310a0-4ubuntu2, automatic), libsource-highlight-common:arm64 (3.1.9-4.3build1, automatic), librevenge-0.0-0:arm64 (0.0.5-3build1, automatic), libxkbregistry0:arm64 (1.6.0-1build1, automatic), tzdata-legacy:arm64 (2025b-0ubuntu0.24.04.1, automatic), hplip:arm64 (3.23.12+dfsg0-0ubuntu5, automatic), libdhash1t64:arm64 (0.6.2-2.1build1, automatic), libbluetooth3:arm64 (5.72-0ubuntu5.5, automatic), libogg0:arm64 (1.3.5-3build1, automatic), ibverbs-providers:arm64 (50.0-2ubuntu0.2, automatic), python3-six:arm64 (1.16.0-4, automatic), oem-config-gtk:arm64 (24.04.5), python3-sss:arm64 (2.9.4-1.1ubuntu6.3, automatic), gnome-menus:arm64 (3.36.0-1.1ubuntu3), fonts-noto-color-emoji:arm64 (2.047-0ubuntu0.24.04.1, automatic), libxinerama1:arm64 (2:1.1.4-3build1, automatic), libdpkg-perl:arm64 (1.22.6ubuntu6.5, automatic), gir1.2-pango-1.0:arm64 (1.52.1+ds-1build1, automatic), eatmydata:arm64 (131-1ubuntu1, automatic), printer-driver-sag-gdi:arm64 (0.1-8, automatic), libwnck-3-0:arm64 (43.0-3build4, automatic), libppd2-common:arm64 (2:2.0.0-0ubuntu4.1, automatic), fonts-liberation-sans-narrow:arm64 (1:1.07.6-4, automatic), libjbig0:arm64 (2.1-6.1ubuntu2, automatic), python3-uno:arm64 (4:24.2.7-0ubuntu0.24.04.4, automatic), cryptsetup:arm64 (2:2.7.0-1ubuntu4.2, automatic), distro-info:arm64 (1.7build1, automatic), libopenjp2-7:arm64 (2.5.0-2ubuntu0.4, automatic), libwayland-egl1:arm64 (1.22.0-2.1build1, automatic), python3-nacl:arm64 (1.5.0-4build1, automatic), libcdparanoia0:arm64 (3.10.2+debian-14build3, automatic), libpython3-stdlib:arm64 (3.12.3-0ubuntu2.1, automatic), libxcb-shape0:arm64 (1.15-1ubuntu2, automatic), rfkill:arm64 (2.39.3-9ubuntu6.4, automatic), bash-completion:arm64 (1:2.11-8, automatic), libvorbis0a:arm64 (1.3.7-1build3, automatic), x11-apps:arm64 (7.7+11build3, automatic), libdw1t64:arm64 (0.190-1.1ubuntu0.1, automatic), libayatana-ido3-0.4-0:arm64 (0.10.1-1build2, automatic), libestr0:arm64 (0.1.11-1build1, automatic), ubuntu-docs:arm64 (24.04.2, automatic), libdaemon0:arm64 (0.14-7.1ubuntu4, automatic), python3-xdg:arm64 (0.28-2, automatic), sound-theme-freedesktop:arm64 (0.8-2ubuntu1, automatic), python3-yaml:arm64 (6.0.1-2build2, automatic), dmz-cursor-theme:arm64 (0.4.5ubuntu1), libjson-glib-1.0-0:arm64 (1.8.0-2build2, automatic), x11-xserver-utils:arm64 (7.7+10build2, automatic), libubootenv0.1:arm64 (0.3.5-0.1build1, automatic), rhythmbox-plugin-alternative-toolbar:arm64 (0.20.4-1, automatic), libwmf0.2-7-gtk:arm64 (0.2.13-1.1build3, automatic), libdbusmenu-glib4:arm64 (18.10.20180917~bzr492+repack1-3.1ubuntu5, automatic), xserver-xorg-input-wacom:arm64 (1:1.2.0-1ubuntu2, automatic), xfonts-utils:arm64 (1:7.7+6build3, automatic), nano:arm64 (7.2-2ubuntu0.1, automatic), gnome-shell-extension-ubuntu-tiling-assistant:arm64 (46-1ubuntu1.1), libspa-0.2-modules:arm64 (1.0.5-1ubuntu3.2, automatic), rtkit:arm64 (0.13-5build1, automatic), btrfs-progs:arm64 (6.6.3-1.1build2, automatic), fonts-noto-cjk:arm64 (1:20230817+repack1-3, automatic), libbrotli1:arm64 (1.1.0-2build2, automatic), gnome-shell-extension-ubuntu-dock:arm64 (90ubuntu3), xserver-xephyr:arm64 (2:21.1.12-1ubuntu1.5, automatic), nautilus-sendto:arm64 (3.8.6-7build2, automatic), libsframe1:arm64 (2.42-4ubuntu2.8, automatic), grub-common:arm64 (2.12-1ubuntu7.3, automatic), libgpgme11t64:arm64 (1.18.0-4.1ubuntu4, automatic), anacron:arm64 (2.3-39ubuntu2, automatic), bind9-libs:arm64 (1:9.18.39-0ubuntu0.24.04.2, automatic), libpaper-utils:arm64 (1.1.29build1, automatic), cron-daemon-common:arm64 (3.0pl1-184ubuntu2, automatic), libdrm-amdgpu1:arm64 (2.4.125-1ubuntu0.1~24.04.1, automatic), librygel-db-2.8-0:arm64 (0.42.5-1ubuntu3, automatic), simple-scan:arm64 (46.0-0ubuntu2.1, automatic), libgtk-4-1:arm64 (4.14.5+ds-0ubuntu0.7, automatic), gtk2-engines-pixbuf:arm64 (2.24.33-4ubuntu1.1, automatic), sssd:arm64 (2.9.4-1.1ubuntu6.3, automatic), printer-driver-pnm2ppa:arm64 (1.13+nondbs-0ubuntu10, automatic), accountsservice:arm64 (23.13.9-2ubuntu6, automatic), dconf-gsettings-backend:arm64 (0.40.0-4ubuntu0.1, automatic), cups-core-drivers:arm64 (2.4.7-1.2ubuntu7.9, automatic), libdrm-radeon1:arm64 (2.4.125-1ubuntu0.1~24.04.1, automatic), libusbmuxd6:arm64 (2.0.2-4build3, automatic), libdrm2:arm64 (2.4.125-1ubuntu0.1~24.04.1, automatic), aptdaemon-data:arm64 (1.1.1+bzr982-0ubuntu44, automatic), libwhoopsie0:arm64 (0.2.77ubuntu0.1, automatic), libyelp0:arm64 (42.2-1ubuntu0.24.04.1, automatic), ibus-gtk:arm64 (1.5.29-2, automatic), samba-libs:arm64 (2:4.19.5+dfsg-4ubuntu9.4, automatic), libsensors5:arm64 (1:3.6.0-9build1, automatic), liblmdb0:arm64 (0.9.31-1build1, automatic), libavahi-glib1:arm64 (0.8-13ubuntu6.1, automatic), sudo:arm64 (1.9.15p5-3ubuntu5.24.04.1), gnome-control-center:arm64 (1:46.7-0ubuntu0.24.04.3), libxcb-randr0:arm64 (1.15-1ubuntu2, automatic), ubuntu-standard:arm64 (1.539.2), rdate:arm64 (1:1.11-3ubuntu2, automatic), ubuntu-desktop-minimal:arm64 (1.539.2), librdf0t64:arm64 (1.0.17-3.1ubuntu3, automatic), gnome-terminal-data:arm64 (3.52.0-1ubuntu2, automatic), mscompress:arm64 (0.4-10build1, automatic), gir1.2-webkit-6.0:arm64 (2.50.4-0ubuntu0.24.04.1, automatic), python3-update-manager:arm64 (1:24.04.12, automatic), libsystemd-shared:arm64 (255.4-1ubuntu8.12, automatic), pkexec:arm64 (124-2ubuntu1.24.04.2, automatic), libadwaita-1-0:arm64 (1.5.0-1ubuntu2, automatic), yelp:arm64 (42.2-1ubuntu0.24.04.1, automatic), usbmuxd:arm64 (1.1.1-5~exp3ubuntu2.1, automatic), libharfbuzz-gobject0:arm64 (8.3.0-2build2, automatic), netplan.io:arm64 (1.1.2-8ubuntu1~24.04.1), libxcb-damage0:arm64 (1.15-1ubuntu2, automatic), libpipewire-0.3-0t64:arm64 (1.0.5-1ubuntu3.2, automatic), libtotem-plparser-common:arm64 (3.26.6-1build5, automatic), plymouth-label:arm64 (24.004.60-1ubuntu7.1, automatic), transmission-common:arm64 (4.0.5-1build5, automatic), python3-apport:arm64 (2.28.1-0ubuntu3.8, automatic), keyboard-configuration:arm64 (1.226ubuntu1, automatic), libao-common:arm64 (1.2.2+20180113-1.1ubuntu4, automatic), gir1.2-rsvg-2.0:arm64 (2.58.0+dfsg-1build1, automatic), grilo-plugins-0.3-base:arm64 (0.3.16-1.1ubuntu6.1~24.04.1, automatic), libmythes-1.2-0:arm64 (2:1.2.5-1build1, automatic), libfreerdp-client3-3:arm64 (3.5.1+dfsg1-0ubuntu1.1, automatic), libcdio-paranoia2t64:arm64 (10.2+2.0.1-1.1build2, automatic), gtk-update-icon-cache:arm64 (3.24.41-4ubuntu1.3, automatic), libcares2:arm64 (1.27.0-1.0ubuntu1, automatic), libxcb-xkb1:arm64 (1.15-1ubuntu2, automatic), liblouisutdml-data:arm64 (2.12.0-3.1build1, automatic), python3-commandnotfound:arm64 (23.04.0, automatic), efibootmgr:arm64 (18-1build2, automatic), libvisio-0.1-1:arm64 (0.1.7-1build9, automatic), gnome-session-canberra:arm64 (0.30-10ubuntu10), libkmod2:arm64 (31+20240202-2ubuntu7.1, automatic), libclone-perl:arm64 (0.46-1build3, automatic), libgprofng0:arm64 (2.42-4ubuntu2.8, automatic), libxext6:arm64 (2:1.3.4-1build2, automatic), initramfs-tools:arm64 (0.142ubuntu25.8, automatic), libhyphen0:arm64 (2.8.8-7build3, automatic), libntfs-3g89t64:arm64 (1:2022.10.3-1.2ubuntu3, automatic), libgpgmepp6t64:arm64 (1.18.0-4.1ubuntu4, automatic), libsoup-3.0-common:arm64 (3.4.4-5ubuntu0.7, automatic), libgtk-3-common:arm64 (3.24.41-4ubuntu1.3, automatic), mtd-utils:arm64 (1:2.2.0-1ubuntu2, automatic), libisl23:arm64 (0.26-3build1.1, automatic), libc6-dbg:arm64 (2.39-0ubuntu8.7, automatic), hplip-data:arm64 (3.23.12+dfsg0-0ubuntu5, automatic), libreoffice-style-yaru:arm64 (4:24.2.7-0ubuntu0.24.04.4, automatic), tpm-udev:arm64 (0.6ubuntu1, automatic), parted:arm64 (3.6-4build1), nautilus:arm64 (1:46.4-0ubuntu0.2), xdg-utils:arm64 (1.1.3-4.1ubuntu3, automatic), media-player-info:arm64 (24-3, automatic), gir1.2-soup-3.0:arm64 (3.4.4-5ubuntu0.7, automatic), cpio:arm64 (2.15+dfsg-1ubuntu2), dirmngr:arm64 (2.4.4-2ubuntu17.4, automatic), libpeas-1.0-0:arm64 (1.36.0-3build4, automatic), python3-aptdaemon.gtk3widgets:arm64 (1.1.1+bzr982-0ubuntu44, automatic), libcanberra-pulse:arm64 (0.30-10ubuntu10, automatic), librygel-renderer-2.8-0:arm64 (0.42.5-1ubuntu3, automatic), libcolord-gtk4-1t64:arm64 (0.3.1-1build2, automatic), bc:arm64 (1.07.1-3ubuntu4, automatic), dc:arm64 (1.07.1-3ubuntu4, automatic), ed:arm64 (1.20.1-1), libksba8:arm64 (1.6.6-1build1, automatic), colord-data:arm64 (1.4.7-1build2, automatic), libical3t64:arm64 (3.0.17-1.1build3, automatic), libnss-sss:arm64 (2.9.4-1.1ubuntu6.3, automatic), jq:arm64 (1.7.1-3ubuntu0.24.04.1, automatic), libmozjs-115-0t64:arm64 (115.10.0-1, automatic), cracklib-runtime:arm64 (2.9.6-5.1build2, automatic), nautilus-data:arm64 (1:46.4-0ubuntu0.2, automatic), libharfbuzz0b:arm64 (8.3.0-2build2, automatic), libxml-twig-perl:arm64 (1:3.52-2, automatic), libtext-iconv-perl:arm64 (1.7-8build3, automatic), systemd-sysv:arm64 (255.4-1ubuntu8.12, automatic), libreoffice-uiconfig-common:arm64 (4:24.2.7-0ubuntu0.24.04.4, automatic), libsecret-common:arm64 (0.21.4-1build3, automatic), python3-cups:arm64 (2.0.1-5build6, automatic), fonts-dejavu-core:arm64 (2.37-8, automatic), cron:arm64 (3.0pl1-184ubuntu2), libsource-highlight4t64:arm64 (3.1.9-4.3build1, automatic), libgtk-3-bin:arm64 (3.24.41-4ubuntu1.3, automatic), apt-utils:arm64 (2.8.3), ubiquity-ubuntu-artwork:arm64 (24.04.5, automatic), python3-idna:arm64 (3.6-2ubuntu0.1, automatic), unzip:arm64 (6.0-28ubuntu4.1, automatic), gnupg-utils:arm64 (2.4.4-2ubuntu17.4, automatic), gir1.2-totemplparser-1.0:arm64 (3.26.6-1build5, automatic), python3-olefile:arm64 (0.46-3, automatic), bluez:arm64 (5.72-0ubuntu5.5, automatic), gnome-terminal:arm64 (3.52.0-1ubuntu2, automatic), sssd-krb5:arm64 (2.9.4-1.1ubuntu6.3, automatic), python3-pygments:arm64 (2.17.2+dfsg-1, automatic), libpam-cap:arm64 (1:2.66-5ubuntu2.2, automatic), libtss2-tcti-device0t64:arm64 (4.0.1-7.1ubuntu5.1, automatic), whoopsie:arm64 (0.2.77ubuntu0.1, automatic), libdbusmenu-gtk3-4:arm64 (18.10.20180917~bzr492+repack1-3.1ubuntu5, automatic), ibus:arm64 (1.5.29-2, automatic), gnome-characters:arm64 (46.0-1build1, automatic), libipa-hbac0t64:arm64 (2.9.4-1.1ubuntu6.3, automatic), libraqm0:arm64 (0.10.1-1build1, automatic), xfonts-base:arm64 (1:1.0.5+nmu1, automatic), libhandy-1-0:arm64 (1.8.3-1build2, automatic), xorg-docs-core:arm64 (1:1.7.1-1.2, automatic), python3-bcrypt:arm64 (3.2.2-1build1, automatic), libaa1:arm64 (1.4p5-51.1, automatic), python3-chardet:arm64 (5.2.0+dfsg-1, automatic), unattended-upgrades:arm64 (2.9.1+nmu4ubuntu1, automatic), cups:arm64 (2.4.7-1.2ubuntu7.9, automatic), libmpg123-0t64:arm64 (1.32.5-1ubuntu1.1, automatic), libao4:arm64 (1.2.2+20180113-1.1ubuntu4, automatic), libpcre2-32-0:arm64 (10.42-4ubuntu2.1, automatic), heif-gdk-pixbuf:arm64 (1.17.6-1ubuntu4.2, automatic), libslang2:arm64 (2.3.3-3build2, automatic), aspell-en:arm64 (2020.12.07-0-1, automatic), libpkcs11-helper1t64:arm64 (1.29.0-2.1build2, automatic), libegl-mesa0:arm64 (25.2.8-0ubuntu0.24.04.1, automatic), libduktape207:arm64 (2.7.0+tests-0ubuntu3, automatic), libgnome-rr-4-2t64:arm64 (44.0-5build2, automatic), apport-core-dump-handler:arm64 (2.28.1-0ubuntu3.8, automatic), libtracker-sparql-3.0-0:arm64 (3.7.1-1build1, automatic), xfonts-scalable:arm64 (1:1.0.3-1.3, automatic), libxcb-render-util0:arm64 (0.3.9-1build4, automatic), libargon2-1:arm64 (0~20190702+dfsg-4build1, automatic), libsane1:arm64 (1.2.1-7build4, automatic), libpoppler-glib8t64:arm64 (24.02.0-1ubuntu9.8, automatic), libcairo-gobject-perl:arm64 (1.005-4build3, automatic), libenchant-2-2:arm64 (2.3.3-2build2, automatic), session-migration:arm64 (0.3.9build1, automatic), libreoffice-math:arm64 (4:24.2.7-0ubuntu0.24.04.4, automatic), python3-debconf:arm64 (1.5.86ubuntu1, automatic), python3-configobj:arm64 (5.0.8-3, automatic), libpangoxft-1.0-0:arm64 (1.52.1+ds-1build1, automatic), libhttp-message-perl:arm64 (6.45-1ubuntu1, automatic), xml-core:arm64 (0.19, automatic), libflashrom1:arm64 (1.3.0-2.1ubuntu2, automatic), liblouisutdml9t64:arm64 (2.12.0-3.1build1, automatic), gnupg-l10n:arm64 (2.4.4-2ubuntu17.4, automatic), libsss-idmap0:arm64 (2.9.4-1.1ubuntu6.3, automatic), libreoffice-gtk3:arm64 (4:24.2.7-0ubuntu0.24.04.4, automatic), libexttextcat-data:arm64 (3.4.7-1build1, automatic), libgtk-4-bin:arm64 (4.14.5+ds-0ubuntu0.7, automatic), libblockdev-nvme3:arm64 (3.1.1-1ubuntu0.1, automatic), gir1.2-gweather-4.0:arm64 (4.4.2-1build1, automatic), libpipewire-0.3-modules:arm64 (1.0.5-1ubuntu3.2, automatic), libjcat1:arm64 (0.2.0-2build3, automatic), ubuntu-release-upgrader-core:arm64 (1:24.04.28, automatic), libfreehand-0.1-1:arm64 (0.1.2-3build3, automatic), libpam-pwquality:arm64 (1.4.5-3build1, automatic), gnome-accessibility-themes:arm64 (3.28-2ubuntu5, automatic), libfile-listing-perl:arm64 (6.16-1, automatic), gpg-wks-client:arm64 (2.4.4-2ubuntu17.4, automatic), gsettings-ubuntu-schemas:arm64 (0.0.7+21.10.20210712-0ubuntu3, automatic), libgtk-4-media-gstreamer:arm64 (4.14.5+ds-0ubuntu0.7, automatic), libxcb-shm0:arm64 (1.15-1ubuntu2, automatic), gir1.2-harfbuzz-0.0:arm64 (8.3.0-2build2, automatic), gir1.2-gdesktopenums-3.0:arm64 (46.1-0ubuntu1, automatic), libei1:arm64 (1.2.1-1, automatic), remmina-common:arm64 (1.4.35+dfsg-0ubuntu5.1, automatic), iio-sensor-proxy:arm64 (3.5-1build2, automatic), libplymouth5:arm64 (24.004.60-1ubuntu7.1, automatic), librhythmbox-core10:arm64 (3.4.7-2ubuntu6, automatic), libpci3:arm64 (1:3.10.0-2build1, automatic), libgtk-3-0t64:arm64 (3.24.41-4ubuntu1.3, automatic), libgnomekbd8:arm64 (3.28.1-1build3, automatic), gnome-themes-extra:arm64 (3.28-2ubuntu5, automatic), python3.12-minimal:arm64 (3.12.3-1ubuntu0.11, automatic), dconf-service:arm64 (0.40.0-4ubuntu0.1, automatic), command-not-found:arm64 (23.04.0, automatic), libevdocument3-4t64:arm64 (46.3.1-0ubuntu1, automatic), libgs-common:arm64 (10.02.1~dfsg1-0ubuntu7.8, automatic), gir1.2-upowerglib-1.0:arm64 (1.90.3-1, automatic), libgd3:arm64 (2.3.3-9ubuntu5, automatic), libxml-parser-perl:arm64 (2.47-1build3, automatic), perl-modules-5.38:arm64 (5.38.2-3.2ubuntu0.2, automatic), libgl1:arm64 (1.7.0-1build1, automatic), whoopsie-preferences:arm64 (23build3, automatic), libuno-cppu3t64:arm64 (4:24.2.7-0ubuntu0.24.04.4, automatic), python3-cryptography:arm64 (41.0.7-4ubuntu0.1, automatic), libwebkitgtk-6.0-4:arm64 (2.50.4-0ubuntu0.24.04.1, automatic), libegl1:arm64 (1.7.0-1build1, automatic), libinih1:arm64 (55-1ubuntu2, automatic), libtss2-mu-4.0.1-0t64:arm64 (4.0.1-7.1ubuntu5.1, automatic), gir1.2-vte-2.91:arm64 (0.76.0-1ubuntu0.1, automatic), time:arm64 (1.9-0.2build1), gnome-keyring-pkcs11:arm64 (46.1-2build1, automatic), wireplumber:arm64 (0.4.17-1ubuntu4.1), speech-dispatcher:arm64 (0.12.0~rc2-2build3, automatic), libx11-6:arm64 (2:1.8.7-1build1, automatic), sssd-ad:arm64 (2.9.4-1.1ubuntu6.3, automatic), ethtool:arm64 (1:6.7-1build1, automatic), libgstreamer-plugins-base1.0-0:arm64 (1.24.2-1ubuntu0.3, automatic), libdbus-glib-1-2:arm64 (0.112-3build2, automatic), libtag1v5-vanilla:arm64 (1.13.1-1build1, automatic), libeis1:arm64 (1.2.1-1, automatic), libspeechd2:arm64 (0.12.0~rc2-2build3, automatic), xserver-xorg-video-all:arm64 (1:7.7+23ubuntu3, automatic), libmediaart-2.0-0:arm64 (1.9.6-1build2, automatic), libjq1:arm64 (1.7.1-3ubuntu0.24.04.1, automatic), xserver-xorg-video-ati:arm64 (1:22.0.0-1build1, automatic), libwayland-client0:arm64 (1.22.0-2.1build1, automatic), libiniparser1:arm64 (4.1-7ubuntu0.1, automatic), python3-launchpadlib:arm64 (1.11.0-6, automatic), sane-airscan:arm64 (0.99.29-0ubuntu4, automatic), libgraphene-1.0-0:arm64 (1.10.8-3build2, automatic), info:arm64 (7.1-3build2), init:arm64 (1.66ubuntu1), fonts-droid-fallback:arm64 (1:6.0.1r16-1.1build1, automatic), libgdata22:arm64 (0.18.1-6build2, automatic), python3-pyrsistent:arm64 (0.20.0-1build2, automatic), libgnome-autoar-0-0:arm64 (0.4.4-2build4, automatic), libldacbt-abr2:arm64 (2.0.2.3+git20200429+ed310a0-4ubuntu2, automatic), libmagic1t64:arm64 (1:5.45-3build1, automatic), libperl5.38t64:arm64 (5.38.2-3.2ubuntu0.2, automatic), python3-dbus:arm64 (1.3.2-5build3, automatic), libxkbcommon-x11-0:arm64 (1.6.0-1build1, automatic), xdg-dbus-proxy:arm64 (0.1.5-1ubuntu0.1, automatic), liblcms2-2:arm64 (2.14-2build1, automatic), cups-server-common:arm64 (2.4.7-1.2ubuntu7.9, automatic), libroc0.3:arm64 (0.3.0+dfsg-7ubuntu2, automatic), groff-base:arm64 (1.23.0-3build2, automatic), libvte-2.91-0:arm64 (0.76.0-1ubuntu0.1, automatic), libpng16-16t64:arm64 (1.6.43-5ubuntu0.4, automatic), libglib-object-introspection-perl:arm64 (0.051-1build3, automatic), dbus-system-bus-common:arm64 (1.14.10-4ubuntu4.1, automatic), libnfsidmap1:arm64 (1:2.6.4-3ubuntu5.1, automatic), libtss2-tcti-swtpm0t64:arm64 (4.0.1-7.1ubuntu5.1, automatic), libwpg-0.3-3:arm64 (0.3.4-3build1, automatic), libnet-dbus-perl:arm64 (1.2.0-2build3, automatic), ubiquity:arm64 (24.04.5, automatic), libaccountsservice0:arm64 (23.13.9-2ubuntu6, automatic), shotwell:arm64 (0.32.6-1ubuntu3, automatic), libblockdev-crypto3:arm64 (3.1.1-1ubuntu0.1, automatic), libnm0:arm64 (1.46.0-1ubuntu2.5, automatic), libuno-cppuhelpergcc3-3t64:arm64 (4:24.2.7-0ubuntu0.24.04.4, automatic), libatk-bridge2.0-0t64:arm64 (2.52.0-1build1, automatic), sssd-common:arm64 (2.9.4-1.1ubuntu6.3, automatic), libtalloc2:arm64 (2.4.2-1build2, automatic), libde265-0:arm64 (1.0.15-1build3, automatic), dbus:arm64 (1.14.10-4ubuntu4.1, automatic), libepoxy0:arm64 (1.5.10-1build1, automatic), espeak-ng-data:arm64 (1.51+dfsg-12build1, automatic), sbsigntool:arm64 (0.9.4-3.1ubuntu7, automatic), libelf1t64:arm64 (0.190-1.1ubuntu0.1, automatic), liblttng-ust-ctl5t64:arm64 (2.13.7-1.1ubuntu2, automatic), libimobiledevice6:arm64 (1.3.0-8.1build3, automatic), gir1.2-xkl-1.0:arm64 (5.4-5build2, automatic), libgeoclue-2-0:arm64 (2.7.0-3ubuntu7, automatic), libpam-sss:arm64 (2.9.4-1.1ubuntu6.3, automatic), libeot0:arm64 (0.01-5build3, automatic), libxcb-sync1:arm64 (1.15-1ubuntu2, automatic), libgck-1-0:arm64 (3.41.2-1build3, automatic), libpython3.12-stdlib:arm64 (3.12.3-1ubuntu0.11, automatic), libedit2:arm64 (3.1-20230828-1build1, automatic), libicu74:arm64 (74.2-1ubuntu3.1, automatic), printer-driver-hpcups:arm64 (3.23.12+dfsg0-0ubuntu5, automatic), kpartx:arm64 (0.9.4-5ubuntu8.1, automatic), yaru-theme-gnome-shell:arm64 (24.04.2-0ubuntu1, automatic), libgck-2-2:arm64 (4.2.0-5, automatic), python3-problem-report:arm64 (2.28.1-0ubuntu3.8, automatic), gnome-startup-applications:arm64 (46.0-1ubuntu4, automatic), libreoffice-style-elementary:arm64 (4:24.2.7-0ubuntu0.24.04.4, automatic), libmspub-0.1-1:arm64 (0.1.4-3build7, automatic), xserver-xorg-video-fbdev:arm64 (1:0.5.0-2build2, automatic), gir1.2-secret-1:arm64 (0.21.4-1build3, automatic), at-spi2-common:arm64 (2.52.0-1build1, automatic), iproute2:arm64 (6.1.0-1ubuntu6.2), libnetplan1:arm64 (1.1.2-8ubuntu1~24.04.1, automatic), libspeexdsp1:arm64 (1.2.1-1ubuntu3, automatic), libavahi-client3:arm64 (0.8-13ubuntu6.1, automatic), gpgconf:arm64 (2.4.4-2ubuntu17.4, automatic), libibus-1.0-5:arm64 (1.5.29-2, automatic), sssd-ldap:arm64 (2.9.4-1.1ubuntu6.3, automatic), glib-networking:arm64 (2.80.0-1build1, automatic), libdevmapper1.02.1:arm64 (2:1.02.185-3ubuntu3.2, automatic), libuno-purpenvhelpergcc3-3t64:arm64 (4:24.2.7-0ubuntu0.24.04.4, automatic), libppd2:arm64 (2:2.0.0-0ubuntu4.1, automatic), libglib-perl:arm64 (3:1.329.3-3build3, automatic), libcairo-perl:arm64 (1.109-4build1, automatic), xinit:arm64 (1.4.1-0ubuntu5, automatic), grub-efi-arm64-bin:arm64 (2.12-1ubuntu7.3, automatic), libsm6:arm64 (2:1.2.3-1build3, automatic), totem:arm64 (43.0-2ubuntu4, automatic), gcc-13-base:arm64 (13.3.0-6ubuntu2~24.04, automatic), python3-cupshelpers:arm64 (1.5.18-1ubuntu9, automatic), libuno-salhelpergcc3-3t64:arm64 (4:24.2.7-0ubuntu0.24.04.4, automatic), fonts-ubuntu:arm64 (0.869+git20240321-0ubuntu1, automatic), libdmapsharing-4.0-3t64:arm64 (3.9.13-2build1, automatic), libnewt0.52:arm64 (0.52.24-2ubuntu2, automatic), rhythmbox-data:arm64 (3.4.7-2ubuntu6, automatic), libevview3-3t64:arm64 (46.3.1-0ubuntu1, automatic), policykit-1:arm64 (124-2ubuntu1.24.04.2, automatic), libsss-certmap0:arm64 (2.9.4-1.1ubuntu6.3, automatic), libnss-mdns:arm64 (0.15.1-4build1, automatic), libtotem-plparser18:arm64 (3.26.6-1build5, automatic), xdg-desktop-portal:arm64 (1.18.4-1ubuntu2.24.04.1, automatic), python3-gi-cairo:arm64 (3.48.2-1, automatic), libgweather-4-0t64:arm64 (4.4.2-1build1, automatic), gir1.2-gck-2:arm64 (4.2.0-5, automatic), apport:arm64 (2.28.1-0ubuntu3.8, automatic), binutils:arm64 (2.42-4ubuntu2.8, automatic), gir1.2-nma4-1.0:arm64 (1.10.6-3build2, automatic), libproxy1-plugin-gsettings:arm64 (0.5.4-4build1, automatic), dns-root-data:arm64 (2024071801~ubuntu0.24.04.1, automatic), netcat-openbsd:arm64 (1.226-1ubuntu2), libebackend-1.2-11t64:arm64 (3.52.3-0ubuntu1.1, automatic), gir1.2-atspi-2.0:arm64 (2.52.0-1build1, automatic), bsdextrautils:arm64 (2.39.3-9ubuntu6.4, automatic), kpartx-boot:arm64 (0.9.4-5ubuntu8.1, automatic), libxfixes3:arm64 (1:6.0.0-2build1, automatic), libayatana-indicator3-7:arm64 (0.9.4-1build1, automatic), cloud-initramfs-growroot:arm64 (0.49~24.04.1), pipewire-alsa:arm64 (1.0.5-1ubuntu3.2, automatic), libxdmcp6:arm64 (1:1.1.3-0ubuntu6, automatic), linux-image-raspi:arm64 (6.8.0-1047.51), python3-paramiko:arm64 (2.12.0-2ubuntu4.1, automatic), libexif12:arm64 (0.6.24-1build2, automatic), libbabeltrace1:arm64 (1.5.11-3build3, automatic), libu2f-udev:arm64 (1.1.10-3build3, automatic), p11-kit:arm64 (0.25.3-4ubuntu2.1, automatic), libnet-smtp-ssl-perl:arm64 (1.04-2, automatic), libncurses6:arm64 (6.4+20240113-1ubuntu2, automatic), policykit-desktop-privileges:arm64 (0.22, automatic), fwupd:arm64 (1.9.33-0ubuntu1~24.04.1ubuntu1, automatic), libmtp-runtime:arm64 (1.1.21-3.1build1, automatic), libxi6:arm64 (2:1.8.1-1build1, automatic), python3-systemd:arm64 (235-1build4, automatic), ubuntu-minimal:arm64 (1.539.2), iputils-tracepath:arm64 (3:20240117-1ubuntu0.1, automatic), libxv1:arm64 (2:1.0.11-1.1build1, automatic), libgail-common:arm64 (2.24.33-4ubuntu1.1, automatic), gnome-clocks:arm64 (46.0-1build1, automatic), foomatic-db-compressed-ppds:arm64 (20230202-1, automatic), gnome-session-common:arm64 (46.0-1ubuntu4, automatic), iso-codes:arm64 (4.16.0-1, automatic), libgsf-1-common:arm64 (1.14.51-2ubuntu0.1, automatic), openssl:arm64 (3.0.13-0ubuntu3.7, automatic), update-notifier-common:arm64 (3.192.68.2, automatic), libbasicobjects0t64:arm64 (0.6.2-2.1build1, automatic), cpp-aarch64-linux-gnu:arm64 (4:13.2.0-7ubuntu1, automatic), libglib2.0-0t64:arm64 (2.80.0-6ubuntu3.8, automatic), python3-debian:arm64 (0.1.49ubuntu2, automatic), libinput-bin:arm64 (1.25.0-1ubuntu3.2, automatic), libnatpmp1t64:arm64 (20230423-1.2build1, automatic), libwireplumber-0.4-0:arm64 (0.4.17-1ubuntu4.1, automatic), libhttp-daemon-perl:arm64 (6.16-1, automatic), libatm1t64:arm64 (1:2.5.1-5.1build1, automatic), mobile-broadband-provider-info:arm64 (20230416-1, automatic), libspectre1:arm64 (0.2.12-1build2, automatic), libmtdev1t64:arm64 (1.1.6-1.1build1, automatic), nftables:arm64 (1.0.9-1build1), libxcb-xfixes0:arm64 (1.15-1ubuntu2, automatic), gir1.2-gcr-4:arm64 (4.2.0-5, automatic), upower:arm64 (1.90.3-1, automatic), ubuntu-pro-client:arm64 (37.1ubuntu0~24.04), aspell:arm64 (0.60.8.1-1build1, automatic), libnspr4:arm64 (2:4.35-1.1build1, automatic), libxcb-xv0:arm64 (1.15-1ubuntu2, automatic), libevdev2:arm64 (1.13.1+dfsg-1build1, automatic), libgdk-pixbuf2.0-common:arm64 (2.42.10+dfsg-3ubuntu3.2, automatic)
+End-Date: 2026-02-10  17:11:16
+
+Start-Date: 2026-03-10  15:57:51
+Commandline: apt upgrade -y
+Requested-By: dan (1000)
+Install: linux-modules-6.8.0-1048-raspi:arm64 (6.8.0-1048.52, automatic), linux-image-6.8.0-1048-raspi:arm64 (6.8.0-1048.52, automatic)
+Upgrade: u-boot-tools:arm64 (2025.10-0ubuntu0.24.04.1, 2025.10-0ubuntu0.24.04.2), libgomp1:arm64 (14.2.0-4ubuntu2~24.04, 14.2.0-4ubuntu2~24.04.1), libecal-2.0-3:arm64 (3.52.3-0ubuntu1.1, 3.52.3-0ubuntu1.2), libvpx9:arm64 (1.14.0-1ubuntu2.2, 1.14.0-1ubuntu2.3), evolution-data-server:arm64 (3.52.3-0ubuntu1.1, 3.52.3-0ubuntu1.2), python3.12:arm64 (3.12.3-1ubuntu0.11, 3.12.3-1ubuntu0.12), libedataserverui4-1.0-0t64:arm64 (3.52.3-0ubuntu1.1, 3.52.3-0ubuntu1.2), libssh-4:arm64 (0.10.6-2ubuntu0.2, 0.10.6-2ubuntu0.3), evolution-data-server-common:arm64 (3.52.3-0ubuntu1.1, 3.52.3-0ubuntu1.2), libdjvulibre-text:arm64 (3.5.28-2ubuntu0.24.04.1, 3.5.28-2ubuntu0.24.04.2), libatopology2t64:arm64 (1.2.11-1ubuntu0.1, 1.2.11-1ubuntu0.2), libebook-1.2-21t64:arm64 (3.52.3-0ubuntu1.1, 3.52.3-0ubuntu1.2), libedata-book-1.2-27t64:arm64 (3.52.3-0ubuntu1.1, 3.52.3-0ubuntu1.2), libexpat1:arm64 (2.6.1-2ubuntu0.3, 2.6.1-2ubuntu0.4), libedataserverui-1.2-4t64:arm64 (3.52.3-0ubuntu1.1, 3.52.3-0ubuntu1.2), libpython3.12-minimal:arm64 (3.12.3-1ubuntu0.11, 3.12.3-1ubuntu0.12), libedataserver-1.2-27t64:arm64 (3.52.3-0ubuntu1.1, 3.52.3-0ubuntu1.2), wireless-regdb:arm64 (2025.07.10-0ubuntu1~24.04.1, 2025.10.07-0ubuntu1~24.04.1), libcurl3t64-gnutls:arm64 (8.5.0-2ubuntu10.6, 8.5.0-2ubuntu10.7), libasound2t64:arm64 (1.2.11-1ubuntu0.1, 1.2.11-1ubuntu0.2), libpython3.12t64:arm64 (3.12.3-1ubuntu0.11, 3.12.3-1ubuntu0.12), libcamel-1.2-64t64:arm64 (3.52.3-0ubuntu1.1, 3.52.3-0ubuntu1.2), cpp-13-aarch64-linux-gnu:arm64 (13.3.0-6ubuntu2~24.04, 13.3.0-6ubuntu2~24.04.1), libdjvulibre21:arm64 (3.5.28-2ubuntu0.24.04.1, 3.5.28-2ubuntu0.24.04.2), libnss3:arm64 (2:3.98-1build1, 2:3.98-1ubuntu0.1), libfreerdp3-3:arm64 (3.5.1+dfsg1-0ubuntu1.1, 3.5.1+dfsg1-0ubuntu1.2), libebook-contacts-1.2-4t64:arm64 (3.52.3-0ubuntu1.1, 3.52.3-0ubuntu1.2), libedata-cal-2.0-2t64:arm64 (3.52.3-0ubuntu1.1, 3.52.3-0ubuntu1.2), libcurl4t64:arm64 (8.5.0-2ubuntu10.6, 8.5.0-2ubuntu10.7), libasound2-data:arm64 (1.2.11-1ubuntu0.1, 1.2.11-1ubuntu0.2), libprotobuf32t64:arm64 (3.21.12-8.2ubuntu0.2, 3.21.12-8.2ubuntu0.3), cpp-13:arm64 (13.3.0-6ubuntu2~24.04, 13.3.0-6ubuntu2~24.04.1), libwinpr3-3:arm64 (3.5.1+dfsg1-0ubuntu1.1, 3.5.1+dfsg1-0ubuntu1.2), libfreerdp-server3-3:arm64 (3.5.1+dfsg1-0ubuntu1.1, 3.5.1+dfsg1-0ubuntu1.2), libfreerdp-client3-3:arm64 (3.5.1+dfsg1-0ubuntu1.1, 3.5.1+dfsg1-0ubuntu1.2), libgnutls30t64:arm64 (3.8.3-1.1ubuntu3.4, 3.8.3-1.1ubuntu3.5), python3.12-minimal:arm64 (3.12.3-1ubuntu0.11, 3.12.3-1ubuntu0.12), libpng16-16t64:arm64 (1.6.43-5ubuntu0.4, 1.6.43-5ubuntu0.5), libpython3.12-stdlib:arm64 (3.12.3-1ubuntu0.11, 3.12.3-1ubuntu0.12), gcc-13-base:arm64 (13.3.0-6ubuntu2~24.04, 13.3.0-6ubuntu2~24.04.1), libebackend-1.2-11t64:arm64 (3.52.3-0ubuntu1.1, 3.52.3-0ubuntu1.2), libstdc++6:arm64 (14.2.0-4ubuntu2~24.04, 14.2.0-4ubuntu2~24.04.1), linux-image-raspi:arm64 (6.8.0-1047.51, 6.8.0-1048.52), gcc-14-base:arm64 (14.2.0-4ubuntu2~24.04, 14.2.0-4ubuntu2~24.04.1), libgcc-s1:arm64 (14.2.0-4ubuntu2~24.04, 14.2.0-4ubuntu2~24.04.1)
+End-Date: 2026-03-10  16:00:17
+
+Start-Date: 2026-03-10  16:07:46
+Commandline: apt install git
+Requested-By: dan (1000)
+Install: git:arm64 (1:2.43.0-1ubuntu7.3), liberror-perl:arm64 (0.17029-2, automatic), git-man:arm64 (1:2.43.0-1ubuntu7.3, automatic)
+End-Date: 2026-03-10  16:07:53
+
+Start-Date: 2026-03-10  16:42:21
+Commandline: apt install -y --no-install-recommends build-essential gcc g++ gdb make cmake ninja-build pkg-config git curl wget unzip zip tar xz-utils file nano vim htop tree jq tmux screen
+Requested-By: dan (1000)
+Install: libgcc-13-dev:arm64 (13.3.0-6ubuntu2~24.04.1, automatic), libstdc++-13-dev:arm64 (13.3.0-6ubuntu2~24.04.1, automatic), g++-13:arm64 (13.3.0-6ubuntu2~24.04.1, automatic), gcc-13:arm64 (13.3.0-6ubuntu2~24.04.1, automatic), gcc-13-aarch64-linux-gnu:arm64 (13.3.0-6ubuntu2~24.04.1, automatic), build-essential:arm64 (12.10ubuntu1), libtsan2:arm64 (14.2.0-4ubuntu2~24.04.1, automatic), g++:arm64 (4:13.2.0-7ubuntu1), gcc:arm64 (4:13.2.0-7ubuntu1), vim:arm64 (2:9.1.0016-1ubuntu7.9), libhwasan0:arm64 (14.2.0-4ubuntu2~24.04.1, automatic), libjsoncpp25:arm64 (1.9.5-6build1, automatic), pkgconf:arm64 (1.8.1-2build1, automatic), libcc1-0:arm64 (14.2.0-4ubuntu2~24.04.1, automatic), libevent-core-2.1-7t64:arm64 (2.1.12-stable-9ubuntu2, automatic), gcc-aarch64-linux-gnu:arm64 (4:13.2.0-7ubuntu1, automatic), dpkg-dev:arm64 (1.22.6ubuntu6.5, automatic), libasan8:arm64 (14.2.0-4ubuntu2~24.04.1, automatic), rpcsvc-proto:arm64 (1.4.2-0ubuntu7, automatic), make:arm64 (4.3-4.1build2), lto-disabled-list:arm64 (47, automatic), libcrypt-dev:arm64 (1:4.4.36-4build1, automatic), g++-13-aarch64-linux-gnu:arm64 (13.3.0-6ubuntu2~24.04.1, automatic), pkg-config:arm64 (1.8.1-2build1), vim-runtime:arm64 (2:9.1.0016-1ubuntu7.9, automatic), libitm1:arm64 (14.2.0-4ubuntu2~24.04.1, automatic), librhash0:arm64 (1.4.3-3build1, automatic), libc-dev-bin:arm64 (2.39-0ubuntu8.7, automatic), htop:arm64 (3.3.0-4build1), cmake-data:arm64 (3.28.3-1build7, automatic), libc6-dev:arm64 (2.39-0ubuntu8.7, automatic), pkgconf-bin:arm64 (1.8.1-2build1, automatic), g++-aarch64-linux-gnu:arm64 (4:13.2.0-7ubuntu1, automatic), curl:arm64 (8.5.0-2ubuntu10.7), libubsan1:arm64 (14.2.0-4ubuntu2~24.04.1, automatic), liblsan0:arm64 (14.2.0-4ubuntu2~24.04.1, automatic), libpkgconf3:arm64 (1.8.1-2build1, automatic), tmux:arm64 (3.4-1build1), ninja-build:arm64 (1.11.1-2), tree:arm64 (2.1.1-2ubuntu3), screen:arm64 (4.9.1-1ubuntu1), cmake:arm64 (3.28.3-1build7), libatomic1:arm64 (14.2.0-4ubuntu2~24.04.1, automatic), libutempter0:arm64 (1.2.1-3build1, automatic), linux-libc-dev:arm64 (6.8.0-101.101, automatic)
+Error: Sub-process /usr/bin/dpkg returned an error code (1)
+End-Date: 2026-03-10  16:43:09
+
+Start-Date: 2026-03-10  16:49:25
+Commandline: apt-get -o Dpkg::Use-Pty=0 -f install -y
+Requested-By: dan (1000)
+Error: Sub-process /usr/bin/dpkg returned an error code (1)
+End-Date: 2026-03-10  16:49:26
+
+Start-Date: 2026-03-10  16:55:18
+Commandline: apt-get -o Dpkg::Use-Pty=0 -f install -y
+Requested-By: dan (1000)
+Error: Sub-process /usr/bin/dpkg returned an error code (1)
+End-Date: 2026-03-10  16:55:19
+
+Start-Date: 2026-03-10  17:10:36
+Commandline: apt-get -o Dpkg::Use-Pty=0 -f install -y
+Requested-By: dan (1000)
+Error: Sub-process /usr/bin/dpkg returned an error code (1)
+End-Date: 2026-03-10  17:10:37
+
+Start-Date: 2026-03-10  21:14:10
+Commandline: apt install xclip
+Requested-By: dan (1000)
+Install: xclip:arm64 (0.13-3)
+Error: Sub-process /usr/bin/dpkg returned an error code (1)
+End-Date: 2026-03-10  21:14:13
+
+Start-Date: 2026-03-10  21:42:47
+Commandline: apt --fix-broken install -y
+Requested-By: dan (1000)
+Error: Sub-process /usr/bin/dpkg returned an error code (1)
+End-Date: 2026-03-10  21:42:48
+
+Start-Date: 2026-03-10  21:42:57
+Commandline: apt full-upgrade -y
+Requested-By: dan (1000)
+Error: Sub-process /usr/bin/dpkg returned an error code (1)
+End-Date: 2026-03-10  21:42:57
+
+Start-Date: 2026-03-10  21:51:03
+Commandline: apt --fix-broken install
+Requested-By: dan (1000)
+Error: Sub-process /usr/bin/dpkg returned an error code (1)
+End-Date: 2026-03-10  21:51:04
+
++ tail -n 200 /var/log/apt/term.log
+Selecting previously unselected package libstdc++-13-dev:arm64.
+Preparing to unpack .../18-libstdc++-13-dev_13.3.0-6ubuntu2~24.04.1_arm64.deb ...
+Unpacking libstdc++-13-dev:arm64 (13.3.0-6ubuntu2~24.04.1) ...
+Selecting previously unselected package g++-13-aarch64-linux-gnu.
+Preparing to unpack .../19-g++-13-aarch64-linux-gnu_13.3.0-6ubuntu2~24.04.1_arm64.deb ...
+Unpacking g++-13-aarch64-linux-gnu (13.3.0-6ubuntu2~24.04.1) ...
+Selecting previously unselected package g++-13.
+Preparing to unpack .../20-g++-13_13.3.0-6ubuntu2~24.04.1_arm64.deb ...
+Unpacking g++-13 (13.3.0-6ubuntu2~24.04.1) ...
+Selecting previously unselected package g++-aarch64-linux-gnu.
+Preparing to unpack .../21-g++-aarch64-linux-gnu_4%3a13.2.0-7ubuntu1_arm64.deb ...
+Unpacking g++-aarch64-linux-gnu (4:13.2.0-7ubuntu1) ...
+Selecting previously unselected package g++.
+Preparing to unpack .../22-g++_4%3a13.2.0-7ubuntu1_arm64.deb ...
+Unpacking g++ (4:13.2.0-7ubuntu1) ...
+Selecting previously unselected package make.
+Preparing to unpack .../23-make_4.3-4.1build2_arm64.deb ...
+Unpacking make (4.3-4.1build2) ...
+Selecting previously unselected package lto-disabled-list.
+Preparing to unpack .../24-lto-disabled-list_47_all.deb ...
+Unpacking lto-disabled-list (47) ...
+Selecting previously unselected package dpkg-dev.
+Preparing to unpack .../25-dpkg-dev_1.22.6ubuntu6.5_all.deb ...
+Unpacking dpkg-dev (1.22.6ubuntu6.5) ...
+Selecting previously unselected package build-essential.
+Preparing to unpack .../26-build-essential_12.10ubuntu1_arm64.deb ...
+Unpacking build-essential (12.10ubuntu1) ...
+Selecting previously unselected package libjsoncpp25:arm64.
+Preparing to unpack .../27-libjsoncpp25_1.9.5-6build1_arm64.deb ...
+Unpacking libjsoncpp25:arm64 (1.9.5-6build1) ...
+Selecting previously unselected package librhash0:arm64.
+Preparing to unpack .../28-librhash0_1.4.3-3build1_arm64.deb ...
+Unpacking librhash0:arm64 (1.4.3-3build1) ...
+Selecting previously unselected package cmake-data.
+Preparing to unpack .../29-cmake-data_3.28.3-1build7_all.deb ...
+Unpacking cmake-data (3.28.3-1build7) ...
+Selecting previously unselected package cmake.
+Preparing to unpack .../30-cmake_3.28.3-1build7_arm64.deb ...
+Unpacking cmake (3.28.3-1build7) ...
+Selecting previously unselected package curl.
+Preparing to unpack .../31-curl_8.5.0-2ubuntu10.7_arm64.deb ...
+Unpacking curl (8.5.0-2ubuntu10.7) ...
+Selecting previously unselected package htop.
+Preparing to unpack .../32-htop_3.3.0-4build1_arm64.deb ...
+Unpacking htop (3.3.0-4build1) ...
+Selecting previously unselected package libevent-core-2.1-7t64:arm64.
+Preparing to unpack .../33-libevent-core-2.1-7t64_2.1.12-stable-9ubuntu2_arm64.deb ...
+Unpacking libevent-core-2.1-7t64:arm64 (2.1.12-stable-9ubuntu2) ...
+Selecting previously unselected package libpkgconf3:arm64.
+Preparing to unpack .../34-libpkgconf3_1.8.1-2build1_arm64.deb ...
+Unpacking libpkgconf3:arm64 (1.8.1-2build1) ...
+Selecting previously unselected package libutempter0:arm64.
+Preparing to unpack .../35-libutempter0_1.2.1-3build1_arm64.deb ...
+Unpacking libutempter0:arm64 (1.2.1-3build1) ...
+Selecting previously unselected package ninja-build.
+Preparing to unpack .../36-ninja-build_1.11.1-2_arm64.deb ...
+Unpacking ninja-build (1.11.1-2) ...
+Selecting previously unselected package pkgconf-bin.
+Preparing to unpack .../37-pkgconf-bin_1.8.1-2build1_arm64.deb ...
+Unpacking pkgconf-bin (1.8.1-2build1) ...
+Selecting previously unselected package pkgconf:arm64.
+Preparing to unpack .../38-pkgconf_1.8.1-2build1_arm64.deb ...
+Unpacking pkgconf:arm64 (1.8.1-2build1) ...
+Selecting previously unselected package pkg-config:arm64.
+Preparing to unpack .../39-pkg-config_1.8.1-2build1_arm64.deb ...
+Unpacking pkg-config:arm64 (1.8.1-2build1) ...
+Selecting previously unselected package screen.
+Preparing to unpack .../40-screen_4.9.1-1ubuntu1_arm64.deb ...
+Unpacking screen (4.9.1-1ubuntu1) ...
+Selecting previously unselected package tmux.
+Preparing to unpack .../41-tmux_3.4-1build1_arm64.deb ...
+Unpacking tmux (3.4-1build1) ...
+Selecting previously unselected package tree.
+Preparing to unpack .../42-tree_2.1.1-2ubuntu3_arm64.deb ...
+Unpacking tree (2.1.1-2ubuntu3) ...
+Selecting previously unselected package vim-runtime.
+Preparing to unpack .../43-vim-runtime_2%3a9.1.0016-1ubuntu7.9_all.deb ...
+Adding 'diversion of /usr/share/vim/vim91/doc/help.txt to /usr/share/vim/vim91/doc/help.txt.vim-tiny by vim-runtime'
+Adding 'diversion of /usr/share/vim/vim91/doc/tags to /usr/share/vim/vim91/doc/tags.vim-tiny by vim-runtime'
+Unpacking vim-runtime (2:9.1.0016-1ubuntu7.9) ...
+Selecting previously unselected package vim.
+Preparing to unpack .../44-vim_2%3a9.1.0016-1ubuntu7.9_arm64.deb ...
+Unpacking vim (2:9.1.0016-1ubuntu7.9) ...
+Setting up lto-disabled-list (47) ...
+Setting up htop (3.3.0-4build1) ...
+Setting up linux-libc-dev:arm64 (6.8.0-101.101) ...
+Setting up ninja-build (1.11.1-2) ...
+Setting up libpkgconf3:arm64 (1.8.1-2build1) ...
+Setting up rpcsvc-proto (1.4.2-0ubuntu7) ...
+Setting up make (4.3-4.1build2) ...
+Setting up tree (2.1.1-2ubuntu3) ...
+Setting up libatomic1:arm64 (14.2.0-4ubuntu2~24.04.1) ...
+Setting up libjsoncpp25:arm64 (1.9.5-6build1) ...
+Setting up pkgconf-bin (1.8.1-2build1) ...
+Setting up libutempter0:arm64 (1.2.1-3build1) ...
+Setting up libubsan1:arm64 (14.2.0-4ubuntu2~24.04.1) ...
+Setting up libhwasan0:arm64 (14.2.0-4ubuntu2~24.04.1) ...
+Setting up librhash0:arm64 (1.4.3-3build1) ...
+Setting up libcrypt-dev:arm64 (1:4.4.36-4build1) ...
+Setting up libasan8:arm64 (14.2.0-4ubuntu2~24.04.1) ...
+Setting up cmake-data (3.28.3-1build7) ...
+Setting up libevent-core-2.1-7t64:arm64 (2.1.12-stable-9ubuntu2) ...
+Setting up curl (8.5.0-2ubuntu10.7) ...
+Setting up libtsan2:arm64 (14.2.0-4ubuntu2~24.04.1) ...
+Setting up vim-runtime (2:9.1.0016-1ubuntu7.9) ...
+Setting up libc-dev-bin (2.39-0ubuntu8.7) ...
+Setting up tmux (3.4-1build1) ...
+Setting up libcc1-0:arm64 (14.2.0-4ubuntu2~24.04.1) ...
+Setting up liblsan0:arm64 (14.2.0-4ubuntu2~24.04.1) ...
+Setting up libitm1:arm64 (14.2.0-4ubuntu2~24.04.1) ...
+Setting up vim (2:9.1.0016-1ubuntu7.9) ...
+update-alternatives: using /usr/bin/vim.basic to provide /usr/bin/ex (ex) in auto mode
+update-alternatives: using /usr/bin/vim.basic to provide /usr/bin/rview (rview) in auto mode
+update-alternatives: using /usr/bin/vim.basic to provide /usr/bin/rvim (rvim) in auto mode
+update-alternatives: using /usr/bin/vim.basic to provide /usr/bin/vi (vi) in auto mode
+update-alternatives: using /usr/bin/vim.basic to provide /usr/bin/view (view) in auto mode
+update-alternatives: using /usr/bin/vim.basic to provide /usr/bin/vim (vim) in auto mode
+update-alternatives: using /usr/bin/vim.basic to provide /usr/bin/vimdiff (vimdiff) in auto mode
+Setting up screen (4.9.1-1ubuntu1) ...
+debconf: DbDriver "config": /var/cache/debconf/config.dat is locked by another process: Resource temporarily unavailable
+[1mdpkg:[0m error processing package screen (--configure):
+ installed screen package post-installation script subprocess returned error exit status 1
+Setting up dpkg-dev (1.22.6ubuntu6.5) ...
+Setting up pkgconf:arm64 (1.8.1-2build1) ...
+Setting up pkg-config:arm64 (1.8.1-2build1) ...
+Setting up libgcc-13-dev:arm64 (13.3.0-6ubuntu2~24.04.1) ...
+Setting up cmake (3.28.3-1build7) ...
+Setting up libc6-dev:arm64 (2.39-0ubuntu8.7) ...
+Setting up libstdc++-13-dev:arm64 (13.3.0-6ubuntu2~24.04.1) ...
+Setting up gcc-13-aarch64-linux-gnu (13.3.0-6ubuntu2~24.04.1) ...
+Setting up gcc-13 (13.3.0-6ubuntu2~24.04.1) ...
+Setting up g++-13-aarch64-linux-gnu (13.3.0-6ubuntu2~24.04.1) ...
+Setting up gcc-aarch64-linux-gnu (4:13.2.0-7ubuntu1) ...
+Setting up g++-13 (13.3.0-6ubuntu2~24.04.1) ...
+Setting up gcc (4:13.2.0-7ubuntu1) ...
+Setting up g++-aarch64-linux-gnu (4:13.2.0-7ubuntu1) ...
+Setting up g++ (4:13.2.0-7ubuntu1) ...
+update-alternatives: using /usr/bin/g++ to provide /usr/bin/c++ (c++) in auto mode
+Setting up build-essential (12.10ubuntu1) ...
+Processing triggers for install-info (7.1-3build2) ...
+Processing triggers for desktop-file-utils (0.27-2build1) ...
+Processing triggers for hicolor-icon-theme (0.17-2) ...
+Processing triggers for gnome-menus (3.36.0-1.1ubuntu3) ...
+Processing triggers for libc-bin (2.39-0ubuntu8.7) ...
+Processing triggers for man-db (2.12.0-4build2) ...
+Processing triggers for debianutils (5.17build1) ...
+Errors were encountered while processing:
+ screen
+Log ended: 2026-03-10  16:43:09
+
+Log started: 2026-03-10  16:49:25
+Log ended: 2026-03-10  16:49:26
+
+Log started: 2026-03-10  16:55:18
+Log ended: 2026-03-10  16:55:19
+
+Log started: 2026-03-10  17:10:36
+Log ended: 2026-03-10  17:10:37
+
+Log started: 2026-03-10  21:14:10
+Selecting previously unselected package xclip.
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 143143 files and directories currently installed.)
+Preparing to unpack .../xclip_0.13-3_arm64.deb ...
+Unpacking xclip (0.13-3) ...
+Setting up screen (4.9.1-1ubuntu1) ...
+debconf: DbDriver "config": /var/cache/debconf/config.dat is locked by another process: Resource temporarily unavailable
+[1mdpkg:[0m error processing package screen (--configure):
+ installed screen package post-installation script subprocess returned error exit status 1
+Setting up xclip (0.13-3) ...
+Processing triggers for man-db (2.12.0-4build2) ...
+OkErrors were encountered while processing:
+ screen
+Log ended: 2026-03-10  21:14:13
+
+Log started: 2026-03-10  21:42:47
+Setting up screen (4.9.1-1ubuntu1) ...
+debconf: DbDriver "config": /var/cache/debconf/config.dat is locked by another process: Resource temporarily unavailable
+[1mdpkg:[0m error processing package screen (--configure):
+ installed screen package post-installation script subprocess returned error exit status 1
+Errors were encountered while processing:
+ screen
+Log ended: 2026-03-10  21:42:48
+
+Log started: 2026-03-10  21:42:57
+Setting up screen (4.9.1-1ubuntu1) ...
+debconf: DbDriver "config": /var/cache/debconf/config.dat is locked by another process: Resource temporarily unavailable
+[1mdpkg:[0m error processing package screen (--configure):
+ installed screen package post-installation script subprocess returned error exit status 1
+Errors were encountered while processing:
+ screen
+Log ended: 2026-03-10  21:42:57
+
+Log started: 2026-03-10  21:51:03
+Setting up screen (4.9.1-1ubuntu1) ...
+debconf: DbDriver "config": /var/cache/debconf/config.dat is locked by another process: Resource temporarily unavailable
+[1mdpkg:[0m error processing package screen (--configure):
+ installed screen package post-installation script subprocess returned error exit status 1
+Errors were encountered while processing:
+ screen
+Log ended: 2026-03-10  21:51:04
+
+============================================================
+JOURNAL ENTRIES RELATED TO APT / DPKG / SCREEN / SSH
+============================================================
+
++ sudo journalctl -b --no-pager | grep -Ei 'apt|dpkg|screen|openssh|ssh' | tail -n 300
+Feb 10 12:16:57 danspi systemd[1]: Starting plymouth-start.service - Show Plymouth Boot Screen...
+Feb 10 12:16:57 danspi systemd[1]: Started plymouth-start.service - Show Plymouth Boot Screen.
+Feb 10 12:16:58 danspi kernel: videodev: Linux video capture interface: v2.00
+Feb 10 12:16:58 danspi kernel: input: raspberrypi-ts as /devices/platform/soc/soc:firmware/soc:firmware:touchscreen/input/input3
+Feb 10 12:16:58 danspi systemd[1]: Starting systemd-backlight@backlight:rpi_backlight.service - Load/Save Screen Backlight Brightness of backlight:rpi_backlight...
+Feb 10 12:16:58 danspi systemd[1]: Finished systemd-backlight@backlight:rpi_backlight.service - Load/Save Screen Backlight Brightness of backlight:rpi_backlight.
+Feb 10 12:16:58 danspi kernel: bcm2835-isp bcm2835-isp: Device node capture[0] registered as /dev/video14
+Feb 10 12:16:58 danspi kernel: bcm2835-isp bcm2835-isp: Device node capture[1] registered as /dev/video15
+Feb 10 12:16:59 danspi kernel: bcm2835-isp bcm2835-isp: Register capture node 1 with media controller
+Feb 10 12:16:59 danspi kernel: bcm2835-isp bcm2835-isp: Register capture node 2 with media controller
+Feb 10 12:16:59 danspi kernel: bcm2835-isp bcm2835-isp: Register capture node 3 with media controller
+Feb 10 12:16:59 danspi kernel: bcm2835-isp bcm2835-isp: Device node capture[0] registered as /dev/video21
+Feb 10 12:16:59 danspi kernel: bcm2835-isp bcm2835-isp: Device node capture[1] registered as /dev/video22
+Feb 10 12:16:59 danspi kernel: bcm2835-isp bcm2835-isp: Register capture node 1 with media controller
+Feb 10 12:16:59 danspi kernel: bcm2835-isp bcm2835-isp: Register capture node 2 with media controller
+Feb 10 12:16:59 danspi kernel: bcm2835-isp bcm2835-isp: Register capture node 3 with media controller
+Mar 10 21:43:28 danspi systemd[1]: Started apt-daily.timer - Daily apt download activities.
+Mar 10 21:43:28 danspi systemd[1]: Started apt-daily-upgrade.timer - Daily apt upgrade and clean activities.
+Mar 10 21:43:28 danspi systemd[1]: Started dpkg-db-backup.timer - Daily dpkg database backup timer.
+Mar 10 21:43:41 danspi systemd[1091]: Listening on gcr-ssh-agent.socket - GCR ssh-agent wrapper.
+Mar 10 21:43:41 danspi systemd[1091]: Starting gpg-agent-ssh.socket - GnuPG cryptographic agent (ssh-agent emulation)...
+Mar 10 21:43:41 danspi systemd[1091]: Listening on gpg-agent-ssh.socket - GnuPG cryptographic agent (ssh-agent emulation).
+Mar 10 21:43:47 danspi dbus-daemon[1105]: [session uid=0 pid=1105] Activating service name='org.gnome.Shell.Screencast' requested by ':1.14' (uid=0 pid=1149 comm="gnome-shell --sm-disable --mode=ubiquity" label="unconfined")
+Mar 10 21:43:48 danspi dbus-daemon[1105]: [session uid=0 pid=1105] Activating service name='org.gnome.ScreenSaver' requested by ':1.13' (uid=0 pid=1147 comm="/usr/libexec/gsd-power" label="unconfined")
+Mar 10 21:43:48 danspi dbus-daemon[1105]: [session uid=0 pid=1105] Successfully activated service 'org.gnome.ScreenSaver'
+Mar 10 21:43:50 danspi ubiquity[1151]: log-output -t ubiquity laptop-detect
+Mar 10 21:43:50 danspi dbus-daemon[1105]: [session uid=0 pid=1105] Successfully activated service 'org.gnome.Shell.Screencast'
+Mar 10 21:43:52 danspi ubiquity[1151]: Trying to update apt indexes to run ubuntu-drivers against fresh data.
+Mar 10 21:43:55 danspi systemd[1]: Starting apt-news.service - Update APT News...
+Mar 10 21:44:26 danspi systemd[1]: apt-news.service: Deactivated successfully.
+Mar 10 21:44:26 danspi systemd[1]: Finished apt-news.service - Update APT News.
+Mar 10 21:44:28 danspi sudo[1582]:     root : TTY=tty1 ; PWD=/ ; USER=root ; ENV=DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/0/bus XDG_RUNTIME_DIR=/run/user/0 ; COMMAND=/usr/bin/gsettings get org.gnome.desktop.screensaver idle-activation-enabled
+Mar 10 21:46:11 danspi systemd[2730]: Listening on gcr-ssh-agent.socket - GCR ssh-agent wrapper.
+Mar 10 21:46:11 danspi systemd[2730]: Starting gpg-agent-ssh.socket - GnuPG cryptographic agent (ssh-agent emulation)...
+Mar 10 21:46:11 danspi systemd[2730]: Listening on gpg-agent-ssh.socket - GnuPG cryptographic agent (ssh-agent emulation).
+Mar 10 21:46:12 danspi bluetoothd[955]: Endpoint registered: sender=:1.51 path=/MediaEndpoint/A2DPSink/aptx_hd
+Mar 10 21:46:12 danspi bluetoothd[955]: Endpoint registered: sender=:1.51 path=/MediaEndpoint/A2DPSource/aptx_hd
+Mar 10 21:46:12 danspi bluetoothd[955]: Endpoint registered: sender=:1.51 path=/MediaEndpoint/A2DPSink/aptx
+Mar 10 21:46:12 danspi bluetoothd[955]: Endpoint registered: sender=:1.51 path=/MediaEndpoint/A2DPSource/aptx
+Mar 10 21:46:12 danspi bluetoothd[955]: Endpoint registered: sender=:1.51 path=/MediaEndpoint/A2DPSource/aptx_ll_1
+Mar 10 21:46:12 danspi bluetoothd[955]: Endpoint registered: sender=:1.51 path=/MediaEndpoint/A2DPSource/aptx_ll_0
+Mar 10 21:46:12 danspi bluetoothd[955]: Endpoint registered: sender=:1.51 path=/MediaEndpoint/A2DPSource/aptx_ll_duplex_1
+Mar 10 21:46:12 danspi bluetoothd[955]: Endpoint registered: sender=:1.51 path=/MediaEndpoint/A2DPSource/aptx_ll_duplex_0
+Mar 10 21:46:45 danspi sudo[2793]:      dan : TTY=tty2 ; PWD=/home/dan ; USER=root ; COMMAND=/usr/bin/apt update
+Mar 10 21:46:45 danspi systemd[1]: Starting apt-news.service - Update APT News...
+Mar 10 21:46:45 danspi systemd[1]: apt-news.service: Deactivated successfully.
+Mar 10 21:46:45 danspi systemd[1]: Finished apt-news.service - Update APT News.
+Mar 10 21:47:21 danspi sudo[2941]:      dan : TTY=tty2 ; PWD=/home/dan ; USER=root ; COMMAND=/usr/bin/apt install -y openssh-server
+Mar 10 21:50:59 danspi sudo[2961]:      dan : TTY=tty2 ; PWD=/home/dan ; USER=root ; COMMAND=/usr/bin/apt --fix-broken install
+Mar 10 21:53:31 danspi sudo[3045]:      dan : TTY=tty2 ; PWD=/home/dan ; USER=root ; COMMAND=/usr/bin/dpkg --configure -a
+Mar 10 21:54:54 danspi bluetoothd[955]: Endpoint unregistered: sender=:1.51 path=/MediaEndpoint/A2DPSink/aptx_hd
+Mar 10 21:54:54 danspi bluetoothd[955]: Endpoint unregistered: sender=:1.51 path=/MediaEndpoint/A2DPSource/aptx_hd
+Mar 10 21:54:54 danspi bluetoothd[955]: Endpoint unregistered: sender=:1.51 path=/MediaEndpoint/A2DPSink/aptx
+Mar 10 21:54:54 danspi bluetoothd[955]: Endpoint unregistered: sender=:1.51 path=/MediaEndpoint/A2DPSource/aptx
+Mar 10 21:54:54 danspi bluetoothd[955]: Endpoint unregistered: sender=:1.51 path=/MediaEndpoint/A2DPSource/aptx_ll_1
+Mar 10 21:54:54 danspi bluetoothd[955]: Endpoint unregistered: sender=:1.51 path=/MediaEndpoint/A2DPSource/aptx_ll_0
+Mar 10 21:54:54 danspi bluetoothd[955]: Endpoint unregistered: sender=:1.51 path=/MediaEndpoint/A2DPSource/aptx_ll_duplex_1
+Mar 10 21:54:54 danspi bluetoothd[955]: Endpoint unregistered: sender=:1.51 path=/MediaEndpoint/A2DPSource/aptx_ll_duplex_0
+Mar 10 21:54:57 danspi bluetoothd[955]: Endpoint registered: sender=:1.55 path=/MediaEndpoint/A2DPSink/aptx_hd
+Mar 10 21:54:57 danspi bluetoothd[955]: Endpoint registered: sender=:1.55 path=/MediaEndpoint/A2DPSource/aptx_hd
+Mar 10 21:54:57 danspi bluetoothd[955]: Endpoint registered: sender=:1.55 path=/MediaEndpoint/A2DPSink/aptx
+Mar 10 21:54:57 danspi bluetoothd[955]: Endpoint registered: sender=:1.55 path=/MediaEndpoint/A2DPSource/aptx
+Mar 10 21:54:57 danspi bluetoothd[955]: Endpoint registered: sender=:1.55 path=/MediaEndpoint/A2DPSource/aptx_ll_1
+Mar 10 21:54:57 danspi bluetoothd[955]: Endpoint registered: sender=:1.55 path=/MediaEndpoint/A2DPSource/aptx_ll_0
+Mar 10 21:54:57 danspi bluetoothd[955]: Endpoint registered: sender=:1.55 path=/MediaEndpoint/A2DPSource/aptx_ll_duplex_1
+Mar 10 21:54:57 danspi bluetoothd[955]: Endpoint registered: sender=:1.55 path=/MediaEndpoint/A2DPSource/aptx_ll_duplex_0
+Mar 10 21:54:59 danspi bluetoothd[955]: Endpoint unregistered: sender=:1.55 path=/MediaEndpoint/A2DPSink/aptx_hd
+Mar 10 21:54:59 danspi bluetoothd[955]: Endpoint unregistered: sender=:1.55 path=/MediaEndpoint/A2DPSource/aptx_hd
+Mar 10 21:54:59 danspi bluetoothd[955]: Endpoint unregistered: sender=:1.55 path=/MediaEndpoint/A2DPSink/aptx
+Mar 10 21:54:59 danspi bluetoothd[955]: Endpoint unregistered: sender=:1.55 path=/MediaEndpoint/A2DPSource/aptx
+Mar 10 21:54:59 danspi bluetoothd[955]: Endpoint unregistered: sender=:1.55 path=/MediaEndpoint/A2DPSource/aptx_ll_1
+Mar 10 21:54:59 danspi bluetoothd[955]: Endpoint unregistered: sender=:1.55 path=/MediaEndpoint/A2DPSource/aptx_ll_0
+Mar 10 21:54:59 danspi bluetoothd[955]: Endpoint unregistered: sender=:1.55 path=/MediaEndpoint/A2DPSource/aptx_ll_duplex_1
+Mar 10 21:54:59 danspi bluetoothd[955]: Endpoint unregistered: sender=:1.55 path=/MediaEndpoint/A2DPSource/aptx_ll_duplex_0
+Mar 10 21:55:02 danspi bluetoothd[955]: Endpoint registered: sender=:1.56 path=/MediaEndpoint/A2DPSink/aptx_hd
+Mar 10 21:55:02 danspi bluetoothd[955]: Endpoint registered: sender=:1.56 path=/MediaEndpoint/A2DPSource/aptx_hd
+Mar 10 21:55:02 danspi bluetoothd[955]: Endpoint registered: sender=:1.56 path=/MediaEndpoint/A2DPSink/aptx
+Mar 10 21:55:02 danspi bluetoothd[955]: Endpoint registered: sender=:1.56 path=/MediaEndpoint/A2DPSource/aptx
+Mar 10 21:55:02 danspi bluetoothd[955]: Endpoint registered: sender=:1.56 path=/MediaEndpoint/A2DPSource/aptx_ll_1
+Mar 10 21:55:02 danspi bluetoothd[955]: Endpoint registered: sender=:1.56 path=/MediaEndpoint/A2DPSource/aptx_ll_0
+Mar 10 21:55:02 danspi bluetoothd[955]: Endpoint registered: sender=:1.56 path=/MediaEndpoint/A2DPSource/aptx_ll_duplex_1
+Mar 10 21:55:02 danspi bluetoothd[955]: Endpoint registered: sender=:1.56 path=/MediaEndpoint/A2DPSource/aptx_ll_duplex_0
+Mar 10 21:55:22 danspi sudo[3091]:      dan : TTY=tty2 ; PWD=/home/dan ; USER=root ; COMMAND=/usr/bin/dpkg --configure -a
+Mar 10 21:55:38 danspi sudo[3096]:      dan : TTY=tty2 ; PWD=/home/dan ; USER=root ; COMMAND=/usr/bin/apt install --reinstall -y screen
+Mar 10 21:57:11 danspi sudo[3139]:      dan : TTY=tty2 ; PWD=/home/dan ; USER=root ; COMMAND=/usr/bin/dpkg --remove --force-remove-reinstreq screen
+Mar 10 21:57:33 danspi sudo[3274]:      dan : TTY=tty2 ; PWD=/home/dan ; USER=root ; COMMAND=/usr/bin/dpkg --configure -a
+Mar 10 21:57:40 danspi sudo[3277]:      dan : TTY=tty2 ; PWD=/home/dan ; USER=root ; COMMAND=/usr/bin/apt clean
+Mar 10 21:57:45 danspi sudo[3281]:      dan : TTY=tty2 ; PWD=/home/dan ; USER=root ; COMMAND=/usr/bin/apt update
+Mar 10 21:57:45 danspi systemd[1]: Starting apt-news.service - Update APT News...
+Mar 10 21:57:45 danspi systemd[1]: apt-news.service: Deactivated successfully.
+Mar 10 21:57:45 danspi systemd[1]: Finished apt-news.service - Update APT News.
+Mar 10 21:58:11 danspi sudo[3422]:      dan : TTY=tty2 ; PWD=/home/dan ; USER=root ; COMMAND=/usr/bin/apt --fix-broken install
+Mar 10 21:58:26 danspi sudo[3460]:      dan : TTY=tty2 ; PWD=/home/dan ; USER=root ; COMMAND=/usr/bin/apt full-upgrade -y
+Mar 10 21:58:55 danspi sudo[3484]:      dan : TTY=tty2 ; PWD=/home/dan ; USER=root ; COMMAND=/usr/bin/apt install -y openssh-server
+Mar 10 22:04:09 danspi sudo[3592]:      dan : TTY=tty2 ; PWD=/home/dan/00_projects/danspi/startup/debug ; USER=root ; COMMAND=/usr/bin/apt -s --fix-broken install
+Mar 10 22:04:12 danspi sudo[3631]:      dan : TTY=tty2 ; PWD=/home/dan/00_projects/danspi/startup/debug ; USER=root ; COMMAND=/usr/bin/apt -s install openssh-server
+Mar 10 22:04:14 danspi sudo[3644]:      dan : TTY=tty2 ; PWD=/home/dan/00_projects/danspi/startup/debug ; USER=root ; COMMAND=/usr/bin/apt -s install openssh-client openssh-sftp-server openssh-server
+Mar 10 22:04:16 danspi sudo[3657]:      dan : TTY=tty2 ; PWD=/home/dan/00_projects/danspi/startup/debug ; USER=root ; COMMAND=/usr/bin/apt update
+Mar 10 22:04:16 danspi systemd[1]: Starting apt-news.service - Update APT News...
+Mar 10 22:04:17 danspi systemd[1]: apt-news.service: Deactivated successfully.
+Mar 10 22:04:17 danspi systemd[1]: Finished apt-news.service - Update APT News.
+Mar 10 22:04:22 danspi sudo[3792]:      dan : TTY=tty2 ; PWD=/home/dan/00_projects/danspi/startup/debug ; USER=root ; COMMAND=/usr/bin/dpkg --configure -a
+
+============================================================
+DISK / FILESYSTEM / INODES
+============================================================
+
++ df -h
+Filesystem      Size  Used Avail Use% Mounted on
+tmpfs           379M  3.3M  376M   1% /run
+/dev/mmcblk0p2  117G  7.0G  105G   7% /
+tmpfs           1.9G     0  1.9G   0% /dev/shm
+tmpfs           5.0M     0  5.0M   0% /run/lock
+/dev/mmcblk0p1  505M  198M  307M  40% /boot/firmware
+tmpfs           379M   84K  379M   1% /run/user/0
+tmpfs           379M   84K  379M   1% /run/user/1000
+
++ df -i
+Filesystem      Inodes  IUsed   IFree IUse% Mounted on
+tmpfs           484393   1694  482699    1% /run
+/dev/mmcblk0p2 7706400 161447 7544953    3% /
+tmpfs           484393      1  484392    1% /dev/shm
+tmpfs           484393      3  484390    1% /run/lock
+/dev/mmcblk0p1       0      0       0     - /boot/firmware
+tmpfs            96878     93   96785    1% /run/user/0
+tmpfs            96878     87   96791    1% /run/user/1000
+
+============================================================
+PERMISSIONS / OWNERSHIP OF KEY APT PATHS
+============================================================
+
++ ls -ld /var/lib/dpkg
+drwxr-xr-x 7 root root 4096 Mar 10 22:04 /var/lib/dpkg
+
++ ls -ld /var/lib/dpkg/status
+-rw-r--r-- 1 root root 1786590 Mar 10 22:04 /var/lib/dpkg/status
+
++ ls -ld /var/lib/apt
+drwxr-xr-x 5 root root 4096 Mar 10 21:51 /var/lib/apt
+
++ ls -ld /var/cache/apt
+drwxr-xr-x 3 root root 4096 Mar 10 22:04 /var/cache/apt
+
++ ls -ld /etc/apt
+drwxr-xr-x 8 root root 4096 Feb 10 12:03 /etc/apt
+
++ ls -ld /etc/apt/sources.list.d
+drwxr-xr-x 2 root root 4096 Feb 10 12:03 /etc/apt/sources.list.d
+
+============================================================
+DONE
+============================================================
+Log saved to: /home/dan/apt_ssh_debug_20260310_220407.log
+
+Recommended next step:
+1) copy the full contents of this log into ChatGPT
+2) if too large, paste these sections first:
+   - APT SOURCES
+   - PACKAGE HOLDS
+   - APT POLICY - OPENSSH / SCREEN / CORE
+   - BROKEN / HALF-INSTALLED PACKAGE AUDIT
+   - SCREEN PACKAGE FILES / MAINTAINER SCRIPTS
+   - DPKG CONFIGURE OUTPUT
+   - RECENT APT / DPKG LOGS
