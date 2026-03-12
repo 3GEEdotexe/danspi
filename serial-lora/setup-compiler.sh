@@ -16,7 +16,7 @@ echo "Add the EIM repository to your APT sources list to make it available for i
 echo "deb [trusted=yes] https://dl.espressif.com/dl/eim/apt/ stable main" | sudo tee /etc/apt/sources.list.d/espressif.list
 sudo apt update
 
-echo "Install the EIM Command Line Interface (CLI) together with Graphical User Interface (GUI) via APT."
+echo "Install the EIM Command Line Interface (CLI) via APT."
 sudo apt install eim
 
 echo "Add the EIM repository to your DNF sources list to make it available for installation."
@@ -28,7 +28,7 @@ enabled=1
 gpgcheck=0
 EOF
 
-echo "Install the EIM Command Line Interface (CLI) alone, or together with Graphical User Interface (GUI) via DNF."
+echo "Install the EIM Command Line Interface (CLI) via DNF."
 sudo dnf install eim
 
 # =================== installation instructions ===================
