@@ -14,9 +14,9 @@ if [ -z "$msg" ]; then
     exit 1
 fi
 
-echo
-echo "Changes:"
+echo "Loading changes..."
 git status --short
+git diff --cached --color=always || true
 echo
 
 git add -A
