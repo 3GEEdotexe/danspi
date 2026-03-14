@@ -15,10 +15,10 @@ if [ -z "$msg" ]; then
 fi
 
 echo "Loading status..."
+echo
 git status --short
 echo
-git diff --cached --color=always || true
-echo
+git diff --stat
 
 git add -A
 
