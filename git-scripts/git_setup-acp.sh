@@ -26,8 +26,6 @@ if [ -z "$msg" ]; then
     exit 1
 fi
 
-echo "Loading status..."
-
 {
     git add -A
 } &
@@ -45,7 +43,7 @@ git diff --cached --stat
 echo
 
 echo
-read -rp "Commit these changes? [y/N]: " confirm
+read -rp "Commit these changes? [y/n]: " confirm
 
 case "$confirm" in
     y|Y|yes|YES)
