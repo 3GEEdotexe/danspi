@@ -1,3 +1,4 @@
+cat > ~/bin/git-acp <<'EOF'
 #!/usr/bin/env bash
 set -euo pipefail
 
@@ -47,3 +48,4 @@ case "$confirm" in
         exit 0
         ;;
 esac
+EOF
