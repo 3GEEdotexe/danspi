@@ -1,5 +1,3 @@
-mkdir -p ~/bin
-cat > ~/bin/git-acp <<'EOF'
 #!/usr/bin/env bash
 set -euo pipefail
 
@@ -27,15 +25,25 @@ if git diff --cached --quiet; then
     exit 0
 fi
 
-echo "Committing..."
-git commit -m "$msg"
-
 echo
-echo "Pushing..."
-git push
+read -rp "Commit these changes? [y/N]: " confirm
 
-echo
-echo "Done."
-EOF
+case "$confirm" in
+    y|Y|yes|YES)
+        echo
+        echo "Committing..."
+        git commit -m "$msg"
 
-chmod +x ~/bin/git-acp
+        echo
+        echo "Pushing..."
+        git push
+
+        echo
+        echo "Done."
+        ;;
+    *)
+        echo
+        echo "Commit cancelled."
+        exit 0
+        ;;
+esac
