@@ -1,6 +1,0 @@
-[submodule "external/Heltec_ESP32"]
-	path = external/Heltec_ESP32
-	url = https://github.com/HelTecAutomation/Heltec_ESP32.git
-[submodule "external/esp-idf"]
-	path = external/esp-idf
-	url = https://github.com/espressif/esp-idf.git
