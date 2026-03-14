@@ -4,6 +4,18 @@ set -euo pipefail
 
 msg="${*:-}"
 
+spinner() {
+    local pid=$1
+    local spin='-\|/'
+    local i=0
+    while kill -0 "$pid" 2>/dev/null; do
+        i=$(( (i+1) %4 ))
+        printf "\rLoading status... %s" "${spin:$i:1}"
+        sleep 0.2
+    done
+    printf "\rLoading status... done\n"
+}
+
 if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
     echo "ERROR: not inside a git repository"
     exit 1
@@ -15,17 +27,22 @@ if [ -z "$msg" ]; then
 fi
 
 echo "Loading status..."
-echo
-git status --short
-echo
-git diff --stat
 
-git add -A
+{
+    git add -A
+} &
+spinner $!
 
 if git diff --cached --quiet; then
     echo "Nothing to commit."
     exit 0
 fi
+
+echo
+git status --short
+echo
+git diff --cached --stat
+echo
 
 echo
 read -rp "Commit these changes? [y/N]: " confirm
