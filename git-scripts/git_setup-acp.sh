@@ -13,7 +13,7 @@ spinner() {
         printf "\rLoading status... %s" "${spin:$i:1}"
         sleep 0.2
     done
-    printf "\rPrinting.\n"
+    printf "\rLoading status... done\n"
 }
 
 if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
